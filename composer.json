@@ -1,0 +1,16 @@
+{
+    "name": "rindow/rindow-openblas-ffi",
+    "type": "library",
+    "description": "The Openblas library for FFI on PHP",
+    "keywords": ["rindow","math","openblas","FFI"],
+    "license": "BSD-3-Clause",
+    "require": {
+        "php": "^8.0|^8.1|^8.2|^8.3",
+        "interop-phpobjects/polite-math": "~1.0.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rindow\\OpenBlas\\FFI\\": "src/"
+        }
+    }
+}
