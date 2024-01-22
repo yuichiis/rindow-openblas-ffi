@@ -1320,6 +1320,70 @@ class Test extends TestCase
         $this->assertEquals([100,10,1],$Y->toArray());
     }
 
+    public function testCopyInteger()
+    {
+        $blas = $this->getBlas();
+
+        $X = $this->array([1,2,3,4],dtype:NDArray::int32);
+        $Y = $this->array([0,0,0,0],dtype:NDArray::int32);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_copy($X,$Y);
+
+        $blas->copy($N,$XX,$offX,$incX,$YY,$offY,$incY);
+        $this->assertEquals([1,2,3,4],$Y->toArray());
+
+        $id = $XX->addr(0);
+        var_dump($id[1]);
+        // incX=2 incY=1
+        $X = $this->array([1,2,3,4],dtype:NDArray::int32);
+        $Y = $this->array([0,0,0,0],dtype:NDArray::int32);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_copy($X,$Y);
+        $N = 2;
+        $incX = 2;
+        $incY = 1;
+        $blas->copy($N,$XX,$offX,$incX,$YY,$offY,$incY);
+        $this->assertEquals([1,3,0,0],$Y->toArray());
+
+        // incX=1 incY=2
+        $X = $this->array([1,2,3,4],dtype:NDArray::int32);
+        $Y = $this->array([0,0,0,0],dtype:NDArray::int32);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_copy($X,$Y);
+        $N = 2;
+        $incX = 1;
+        $incY = 2;
+        $blas->copy($N,$XX,$offX,$incX,$YY,$offY,$incY);
+        $this->assertEquals([1,0,2,0],$Y->toArray());
+
+        // incX=1 incY=2 offX=1 offY=0
+        $X = $this->array([1,2,3,4],dtype:NDArray::int32);
+        $Y = $this->array([0,0,0,0],dtype:NDArray::int32);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_copy($X,$Y);
+        $N = 2;
+        $incX = 1;
+        $incY = 2;
+        $offX = 1;
+        $offY = 0;
+        $blas->copy($N,$XX,$offX,$incX,$YY,$offY,$incY);
+        $this->assertEquals([2,0,3,0],$Y->toArray());
+
+        // incX=2 incY=1 offX=0 offY=1
+        $X = $this->array([1,2,3,4],dtype:NDArray::int32);
+        $Y = $this->array([0,0,0,0],dtype:NDArray::int32);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_copy($X,$Y);
+        $N = 2;
+        $incX = 2;
+        $incY = 1;
+        $offX = 0;
+        $offY = 1;
+        $blas->copy($N,$XX,$offX,$incX,$YY,$offY,$incY);
+        $this->assertEquals([0,1,3,0],$Y->toArray());
+
+    }
+
     public function testCopyMinusN()
     {
         $blas = $this->getBlas();

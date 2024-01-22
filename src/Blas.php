@@ -261,12 +261,12 @@ class Blas
             }
             default: {
                 if($incX==1&&$incY==1) {
-                    $bytes = $n*FFI::sizeof($X->_getId()[0]);
+                    $bytes = $n*$X->value_size();
                     FFI::memcpy($Y->addr($offsetY),$X->addr($offsetX),$bytes);
                 } else {
-                    $xx = $X->_getId();
-                    $yy = $Y->_getId();
-                    for($i=0,$idX=$offsetX,$idY=$offsetY; $i<$n; $i++,$idX+=$incX,$idY+=$incY) {
+                    $xx = $X->addr($offsetX);
+                    $yy = $Y->addr($offsetY);
+                    for($i=0,$idX=0,$idY=0; $i<$n; $i++,$idX+=$incX,$idY+=$incY) {
                         $yy[$idY] = $xx[$idX];
                     }
                 }
