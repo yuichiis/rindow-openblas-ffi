@@ -11,7 +11,7 @@ class OpenBLASFactory
     private static ?FFI $ffi = null;
     private static ?FFI $ffiLapacke = null;
     protected array $libs = ['libopenblas.dll','libopenblas.so'];
-    protected array $lapackeLibs = ['liblapack.so'];
+    protected array $lapackeLibs = ['liblapacke.so'];
 
     public function __construct(
         string $headerFile=null,
