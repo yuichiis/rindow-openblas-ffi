@@ -1332,8 +1332,6 @@ class Test extends TestCase
         $blas->copy($N,$XX,$offX,$incX,$YY,$offY,$incY);
         $this->assertEquals([1,2,3,4],$Y->toArray());
 
-        $id = $XX->addr(0);
-        var_dump($id[1]);
         // incX=2 incY=1
         $X = $this->array([1,2,3,4],dtype:NDArray::int32);
         $Y = $this->array([0,0,0,0],dtype:NDArray::int32);
