@@ -1,5 +1,5 @@
 <?php
-namespace RindowTest\OpenBLAS\BlasTest;
+namespace RindowTest\OpenBLAS\FFI\BlasTest;
 
 use PHPUnit\Framework\TestCase;
 use Interop\Polite\Math\Matrix\NDArray;
