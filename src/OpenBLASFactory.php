@@ -65,7 +65,7 @@ class OpenBLASFactory
         $lapackeHeader = $lapackeHeader ?? __DIR__ . '/lapacke.h';
         if($lapackeLibs==null) {
             if(PHP_OS=='Linux') {
-                $lapackeLibs = $this->lapacke_win;
+                $lapackeLibs = $this->lapacke_linux;
             } elseif(PHP_OS=='WINNT') {
                 $lapackeLibs = $this->lapacke_win;
             } else {
