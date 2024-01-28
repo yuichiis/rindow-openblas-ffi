@@ -90,9 +90,9 @@ class Lapack
             throw new InvalidArgumentException("Unmatch data type", 0);
         }
     
-        $jobu_p = FFI::new('char');
+        $jobu_p = $ffi->new('char');
         $jobu_p->cdata = chr($jobu);
-        $jobvt_p = FFI::new('char');
+        $jobvt_p = $ffi->new('char');
         $jobvt_p->cdata = chr($jobvt);
         switch ($dtype) {
             case NDArray::float32:
