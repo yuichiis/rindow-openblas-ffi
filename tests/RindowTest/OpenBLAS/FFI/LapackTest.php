@@ -17,7 +17,7 @@ use OutOfRangeException;
 use ArrayObject;
 use ArrayAccess;
 
-class Test extends TestCase
+class LapackTest extends TestCase
 {
     const LAPACK_ROW_MAJOR = 101;
     const LAPACK_COL_MAJOR = 102;
