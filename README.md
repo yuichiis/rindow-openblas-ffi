@@ -24,3 +24,38 @@ Requirements
 - Linux or Windows
 - OpenBLAS
 
+How to download and setup
+=========================
+
+### Windows
+The OpenBLAS Library release number is included in the filename of the rindow-openblas pre-built archive file.
+
+- https://github.com/xianyi/OpenBLAS/releases
+
+Unzip it to a suitable location and set the execution path in the bin directory.
+
+```shell
+TMP>set PATH=%PATH%;\path\to\OpenBLAS\bin
+```
+
+And then set it up using composer.
+
+```shell
+C> mkdir \your\app\dir
+C> cd \your\app\dir
+C> composer require rindow/rindow-openblas-ffi
+```
+
+### Ubuntu
+Use the apt command to install the deb file. 
+
+```shell
+$ sudo apt install libopenblas-base
+```
+
+And then set it up using composer.
+```shell
+$ mkdir \your\app\dir
+$ cd \your\app\dir
+$ composer require rindow/rindow-openblas-ffi
+```
