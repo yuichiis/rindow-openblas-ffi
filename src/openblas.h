@@ -18,9 +18,9 @@ typedef int32_t                     lapack_int;
 //#define xdouble double
 typedef double xdouble;
 //#define OPENBLAS_COMPLEX_STRUCT
-typedef struct { float real, imag; } openblas_complex_float;
-typedef struct { double real, imag; } openblas_complex_double;
-typedef struct { xdouble real, imag; } openblas_complex_xdouble;
+typedef struct _openblas_complex_float { float real, imag; } openblas_complex_float;
+typedef struct _openblas_complex_double { double real, imag; } openblas_complex_double;
+typedef struct _openblas_complex_xdouble { xdouble real, imag; } openblas_complex_xdouble;
 //#define openblas_make_complex_float(real, imag)    {(real), (imag)}
 //#define openblas_make_complex_double(real, imag)   {(real), (imag)}
 //#define openblas_make_complex_xdouble(real, imag)  {(real), (imag)}
@@ -333,6 +333,8 @@ void cblas_csyr2k(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo, cons
 void cblas_zsyr2k(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE Trans,
 		  const blasint N, const blasint K, const void *alpha, const void *A, const blasint lda, const void *B, const blasint ldb, const void *beta, void *C, const blasint ldc);
 
+
+
 void cblas_strmm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
                  const enum CBLAS_DIAG Diag, const blasint M, const blasint N, const float alpha, const float *A, const blasint lda, float *B, const blasint ldb);
 void cblas_dtrmm(const enum CBLAS_ORDER Order, const enum CBLAS_SIDE Side, const enum CBLAS_UPLO Uplo, const enum CBLAS_TRANSPOSE TransA,
@@ -382,10 +384,10 @@ void cblas_somatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE C
 		     const blasint clda, float *b, const blasint cldb); 
 void cblas_domatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE CTRANS, const blasint crows, const blasint ccols, const double calpha, const double *a,
 		     const blasint clda, double *b, const blasint cldb); 
-void cblas_comatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE CTRANS, const blasint crows, const blasint ccols, const float* calpha, const float* a, 
-		     const blasint clda, float*b, const blasint cldb); 
-void cblas_zomatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE CTRANS, const blasint crows, const blasint ccols, const double* calpha, const double* a, 
-		     const blasint clda,  double *b, const blasint cldb); 
+void cblas_comatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE CTRANS, const blasint crows, const blasint ccols, const void* calpha, const void* a, 
+		     const blasint clda, void *b, const blasint cldb); 
+void cblas_zomatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE CTRANS, const blasint crows, const blasint ccols, const void* calpha, const void* a, 
+		     const blasint clda,  void *b, const blasint cldb); 
 
 void cblas_simatcopy(const enum CBLAS_ORDER CORDER, const enum CBLAS_TRANSPOSE CTRANS, const blasint crows, const blasint ccols, const float calpha, float *a, 
 		     const blasint clda, const blasint cldb); 

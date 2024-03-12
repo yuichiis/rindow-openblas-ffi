@@ -26,6 +26,11 @@ class Blas
         $this->ffi = $ffi;
     }
 
+    public function getFFI()
+    {
+        return $this->ffi;
+    }
+
     public function getNumThreads() : int
     {
         return $this->ffi->openblas_get_num_threads();
@@ -53,13 +58,36 @@ class Blas
         return $this->ffi->openblas_get_parallel();
     }
 
+    protected function toComplex(object $from,int $dtype) : object
+    {
+        $ffi = $this->ffi;
+        switch($dtype) {
+            case NDArray::complex64: {
+                $to = $ffi->new('openblas_complex_float');
+                $to->real = $from->real;
+                $to->imag = $from->imag;
+                break;
+            }
+            case NDArray::complex128: {
+                $to = $ffi->new('openblas_complex_double');
+                $to->real = $from->real;
+                $to->imag = $from->imag;
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+        return $to;
+    }
+
 
     /**
      *  X := alpha * X
      */
     public function scal(
         int $n,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $X, int $offsetX, int $incX) : void
     {
         $ffi= $this->ffi;
@@ -74,6 +102,16 @@ class Blas
                 $ffi->cblas_dscal($n,$alpha,$X->addr($offsetX),$incX);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$X->dtype()));
+                $ffi->cblas_cscal($n,$alpha,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$X->dtype()));
+                $ffi->cblas_zscal($n,$alpha,$X->addr($offsetX),$incX);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -85,7 +123,7 @@ class Blas
      */
     public function axpy(
         int $n,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $X, int $offsetX, int $incX,
         BufferInterface $Y, int $offsetY, int $incY ) : void
     {
@@ -109,6 +147,16 @@ class Blas
             }
             case NDArray::float64:{
                 $ffi->cblas_daxpy($n,$alpha,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$X->dtype()));
+                $ffi->cblas_caxpy($n,$alpha,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$X->dtype()));
+                $ffi->cblas_zaxpy($n,$alpha,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             default: {
@@ -151,6 +199,74 @@ class Blas
         return $result;
     }
 
+    public function dotu(
+        int $n,
+        BufferInterface $X, int $offsetX, int $incX,
+        BufferInterface $Y, int $offsetY, int $incY ) : object
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        // Check Buffer X
+        $this->assert_vector_buffer_spec("X", $X, $n, $offsetX, $incX);
+        // Check Buffer Y
+        $this->assert_vector_buffer_spec("Y", $Y, $n, $offsetY, $incY);
+
+        // Check Buffer X and Y
+        if($X->dtype()!=$Y->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for X and Y");
+        }
+
+        switch($X->dtype()) {
+            case NDArray::complex64:{
+                $result = $ffi->cblas_cdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_zdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+        return $result;
+    }
+
+    public function dotc(
+        int $n,
+        BufferInterface $X, int $offsetX, int $incX,
+        BufferInterface $Y, int $offsetY, int $incY ) : object
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        // Check Buffer X
+        $this->assert_vector_buffer_spec("X", $X, $n, $offsetX, $incX);
+        // Check Buffer Y
+        $this->assert_vector_buffer_spec("Y", $Y, $n, $offsetY, $incY);
+
+        // Check Buffer X and Y
+        if($X->dtype()!=$Y->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for X and Y");
+        }
+
+        switch($X->dtype()) {
+            case NDArray::complex64:{
+                $result = $ffi->cblas_cdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_zdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+        return $result;
+    }
+
     public function asum(
         int $n,
         BufferInterface $X, int $offsetX, int $incX ) : float
@@ -169,6 +285,14 @@ class Blas
             }
             case NDArray::float64:{
                 $result = $ffi->cblas_dasum($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex64:{
+                $result = $ffi->cblas_scasum($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_dzasum($n,$X->addr($offsetX),$incX);
                 break;
             }
             default: {
@@ -198,6 +322,14 @@ class Blas
                 $result = $ffi->cblas_idamax($n,$X->addr($offsetX),$incX);
                 break;
             }
+            case NDArray::complex64:{
+                $result = $ffi->cblas_icamax($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_izamax($n,$X->addr($offsetX),$incX);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -223,6 +355,14 @@ class Blas
             }
             case NDArray::float64:{
                 $result = $ffi->cblas_idamin($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex64:{
+                $result = $ffi->cblas_icamin($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_izamin($n,$X->addr($offsetX),$incX);
                 break;
             }
             default: {
@@ -259,6 +399,14 @@ class Blas
                 $result = $ffi->cblas_dcopy($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
+            case NDArray::complex64:{
+                $result = $ffi->cblas_ccopy($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_zcopy($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
             default: {
                 if($incX==1&&$incY==1) {
                     $bytes = $n*$X->value_size();
@@ -293,6 +441,14 @@ class Blas
             }
             case NDArray::float64:{
                 $result = $ffi->cblas_dnrm2($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex64:{
+                $result = $ffi->cblas_scnrm2($n,$X->addr($offsetX),$incX);
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_dznrm2($n,$X->addr($offsetX),$incX);
                 break;
             }
             default: {
@@ -427,7 +583,15 @@ class Blas
                 break;
             }
             case NDArray::float64:{
-                $ffi->cblas_sswap($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                $ffi->cblas_dswap($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex64:{
+                $ffi->cblas_cswap($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex128:{
+                $ffi->cblas_zswap($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             default: {
@@ -441,10 +605,10 @@ class Blas
         int $trans,
         int $m,
         int $n,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
         BufferInterface $X, int $offsetX, int $incX,
-        float $beta,
+        float|object $beta,
         BufferInterface $Y, int $offsetY, int $incY ) : void
     {
         $ffi= $this->ffi;
@@ -496,6 +660,32 @@ class Blas
                     $Y->addr($offsetY),$incY);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$X->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$X->dtype()));
+                $ffi->cblas_cgemv(
+                    $order, $trans,
+                    $m, $n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $X->addr($offsetX),$incX,
+                    $beta,
+                    $Y->addr($offsetY),$incY);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$X->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$X->dtype()));
+                $ffi->cblas_zgemv(
+                    $order, $trans,
+                    $m, $n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $X->addr($offsetX),$incX,
+                    $beta,
+                    $Y->addr($offsetY),$incY);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -509,10 +699,10 @@ class Blas
         int $m,
         int $n,
         int $k,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
         BufferInterface $B, int $offsetB, int $ldB,
-        float $beta,
+        float|object $beta,
         BufferInterface $C, int $offsetC, int $ldC ) : void
     {
         $ffi= $this->ffi;
@@ -578,6 +768,36 @@ class Blas
                     $C->addr($offsetC),$ldC);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_cgemm(
+                    $order,
+                    $transA,
+                    $transB,
+                    $m,$n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_zgemm(
+                    $order,
+                    $transA,
+                    $transB,
+                    $m,$n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -590,10 +810,10 @@ class Blas
         int $uplo,
         int $m,
         int $n,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
         BufferInterface $B, int $offsetB, int $ldB,
-        float $beta,
+        float|object $beta,
         BufferInterface $C, int $offsetC, int $ldC ) : void
     {
         $ffi= $this->ffi;
@@ -650,6 +870,36 @@ class Blas
                     $C->addr($offsetC),$ldC);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_csymm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_zsymm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -663,9 +913,9 @@ class Blas
         int $trans,
         int $n,
         int $k,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
-        float $beta,
+        float|object $beta,
         BufferInterface $C, int $offsetC, int $ldC ) : void
     {
         $ffi= $this->ffi;
@@ -716,6 +966,34 @@ class Blas
                     $C->addr($offsetC),$ldC);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_csyrk(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_zsyrk(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -728,10 +1006,10 @@ class Blas
         int $trans,
         int $n,
         int $k,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
         BufferInterface $B, int $offsetB, int $ldB,
-        float $beta,
+        float|object $beta,
         BufferInterface $C, int $offsetC, int $ldC ) : void
     {
         $ffi= $this->ffi;
@@ -786,6 +1064,36 @@ class Blas
                     $C->addr($offsetC),$ldC);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_csyr2k(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $beta = FFI::addr($this->toComplex($beta,$A->dtype()));
+                $ffi->cblas_zsyr2k(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -800,7 +1108,7 @@ class Blas
         int $diag,
         int $m,
         int $n,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
         BufferInterface $B, int $offsetB, int $ldB) : void
     {
@@ -854,6 +1162,34 @@ class Blas
                     $B->addr($offsetB),$ldB);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $ffi->cblas_ctrmm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $trans,
+                    $diag,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $ffi->cblas_ztrmm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $trans,
+                    $diag,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
@@ -868,7 +1204,7 @@ class Blas
         int $diag,
         int $m,
         int $n,
-        float $alpha,
+        float|object $alpha,
         BufferInterface $A, int $offsetA, int $ldA,
         BufferInterface $B, int $offsetB, int $ldB) : void
     {
@@ -922,9 +1258,123 @@ class Blas
                     $B->addr($offsetB),$ldB);
                 break;
             }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $ffi->cblas_ctrsm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $trans,
+                    $diag,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $ffi->cblas_ztrsm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $trans,
+                    $diag,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB);
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }
         }
     }
+
+    public function omatcopy(
+        int $order,
+        int $trans,
+        int $m,
+        int $n,
+        float|object $alpha,
+        BufferInterface $A, int $offsetA, int $ldA,
+        BufferInterface $B, int $offsetB, int $ldB,
+    ) : void
+    {
+        $ffi = $this->ffi;
+        $this->assert_shape_parameter("m", $m);
+        $this->assert_shape_parameter("n", $n);
+
+        // Check Buffer size X and Y
+        if($trans==BLASIF::NoTrans || $trans==BLASIF::ConjNoTrans ) {
+            $rows = $m; $cols = $n;
+        } elseif($trans==BLASIF::Trans || $trans==BLASIF::ConjTrans) {
+            $rows = $n; $cols = $m;
+        } else {
+            throw new InvalidArgumentException("unknown transpose mode for buffer.");
+        }
+        $this->assert_matrix_buffer_spec("A", $A, $m, $n, $offsetA, $ldA);
+
+        // Check Buffer B
+        $this->assert_matrix_buffer_spec("B", $B, $rows, $cols, $offsetB, $ldB);
+
+        // Check Buffer A and B
+        if($A->dtype()!=$B->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for A and B");
+        }
+
+        switch($A->dtype()) {
+            case NDArray::float32:{
+                $ffi->cblas_somatcopy(
+                    $order,
+                    $trans,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB
+                );
+                break;
+            }
+            case NDArray::float64:{
+                $ffi->cblas_domatcopy(
+                    $order,
+                    $trans,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB
+                );
+                break;
+            }
+            case NDArray::complex64:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $ffi->cblas_comatcopy(
+                    $order,
+                    $trans,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB
+                );
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = FFI::addr($this->toComplex($alpha,$A->dtype()));
+                $ffi->cblas_zomatcopy(
+                    $order,
+                    $trans,
+                    $m,$n,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB
+                );
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+    }
+
 }
