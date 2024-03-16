@@ -772,14 +772,6 @@ class BlasTest extends TestCase
         $blas->scal($N,$alpha,$XX,$offX,$incX);
         $this->assertEquals([2,4,6],$X->toArray());
 
-        // float64
-        $X = $this->array([1,2,3],dtype:NDArray::float64);
-        [$N,$alpha,$XX,$offX,$incX] =
-            $this->translate_scal(2,$X);
-
-        $blas->scal($N,$alpha,$XX,$offX,$incX);
-        $this->assertEquals([2,4,6],$X->toArray());
-
         // complex64
         $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex64);
         [$N,$alpha,$XX,$offX,$incX] =
@@ -789,14 +781,26 @@ class BlasTest extends TestCase
         //$this->assertEquals([2,4,6],$X->toArray());
         $this->assertEquals($this->toComplex([2,4,6]),$this->toComplex($X->toArray()));
 
-        // complex128
-        $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex128);
-        [$N,$alpha,$XX,$offX,$incX] =
-            $this->translate_scal(C(2),$X);
+        if($this->fp64()) {
+            // float64
+            $dtype = NDArray::float64;
+            $X = $this->array([1,2,3],dtype:$dtype);
+            [$N,$alpha,$XX,$offX,$incX] =
+                $this->translate_scal(2,$X);
 
-        $blas->scal($N,$alpha,$XX,$offX,$incX);
-        //$this->assertEquals([2,4,6],$X->toArray());
-        $this->assertEquals($this->toComplex([2,4,6]),$this->toComplex($X->toArray()));
+            $blas->scal($N,$alpha,$XX,$offX,$incX);
+            $this->assertEquals([2,4,6],$X->toArray());
+
+            // complex128
+            $dtype = NDArray::complex128;
+            $X = $this->array($this->toComplex([1,2,3]),dtype:$dtype);
+            [$N,$alpha,$XX,$offX,$incX] =
+                $this->translate_scal(C(2),$X);
+
+            $blas->scal($N,$alpha,$XX,$offX,$incX);
+            $this->assertEquals($this->toComplex([2,4,6]),$X->toArray());
+
+        }
     }
 
     public function testScalMinusN()
@@ -912,15 +916,6 @@ class BlasTest extends TestCase
         $blas->axpy($N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY);
         $this->assertEquals([12,24,36],$Y->toArray());
 
-        // float64
-        $X = $this->array([1,2,3],dtype:NDArray::float64);
-        $Y = $this->array([10,20,30],dtype:NDArray::float64);
-        [$N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY] =
-            $this->translate_axpy($X,$Y,alpha:2);
-
-        $blas->axpy($N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY);
-        $this->assertEquals([12,24,36],$Y->toArray());
-
         // complex64
         $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex64);
         $Y = $this->array([C(10),C(20),C(30)],dtype:NDArray::complex64);
@@ -931,15 +926,27 @@ class BlasTest extends TestCase
         //$this->assertEquals([12,24,36],$Y->toArray());
         $this->assertEquals($this->toComplex([12,24,36]),$this->toComplex($Y->toArray()));
 
-        // complex128
-        $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex128);
-        $Y = $this->array([C(10),C(20),C(30)],dtype:NDArray::complex128);
-        [$N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY] =
-            $this->translate_axpy($X,$Y,alpha:C(2));
+        if($this->fp64()) {
+            // float64
+            $dtype = NDArray::float64;
+            $x = $this->array([[1,2,3],[4,5,6]],dtype:$dtype);
+            $y = $this->array([[10,20,30],[40,50,60]],dtype:$dtype);
+            [$N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY] = 
+                $this->translate_axpy($x,$y,2);
+            $blas->axpy($N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY);
 
-        $blas->axpy($N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY);
-        //$this->assertEquals([12,24,36],$Y->toArray());
-        $this->assertEquals($this->toComplex([12,24,36]),$this->toComplex($Y->toArray()));
+            $this->assertEquals([[12,24,36],[48,60,72]],$y->toArray());
+
+            // complex128
+            $dtype = NDArray::complex128;
+            $x = $this->array($this->toComplex([[1,2,3],[4,5,6]]),dtype:$dtype);
+            $y = $this->array($this->toComplex([[10,20,30],[40,50,60]]),dtype:$dtype);
+            [$N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY] = 
+                $this->translate_axpy($x,$y,C(2));
+            $blas->axpy($N,$alpha,$XX,$offX,$incX,$YY,$offY,$incY);
+
+            $this->assertEquals($this->toComplex([[12,24,36],[48,60,72]]),$y->toArray());
+        }
     }
 
     public function testAxpyMinusN()
@@ -4419,48 +4426,6 @@ class BlasTest extends TestCase
             [82, 96,110,124]
         ],$C->toArray());
 
-        // float64
-        $A = $this->array([
-            [1,2,3],
-            [2,4,5],
-            [3,5,6],
-        ],dtype:NDArray::float64);
-        $B = $this->array([
-            [1,2,3,4],
-            [5,6,7,8],
-            [9,10,11,12],
-        ],dtype:NDArray::float64);
-        $alpha = 1.0;
-        $beta  = 0.0;
-        $C = $this->zeros([3,4],dtype:NDArray::float64);
-
-        [
-            $order,$side,$uplo,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb,
-            $beta,
-            $CC,$offC,$ldc
-        ] = $this->translate_symm($A,$B,alpha:$alpha,beta:$beta,C:$C);
-
-        $blas->symm(
-            $order,
-            $side,$uplo,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb,
-            $beta,
-            $CC,$offC,$ldc
-        );
-
-        $this->assertEquals([
-            [38, 44, 50, 56],
-            [67, 78, 89,100],
-            [82, 96,110,124]
-        ],$C->toArray());
-
         // complex64
         $A = $this->array($this->toComplex([
             [1,2,3],
@@ -4503,6 +4468,48 @@ class BlasTest extends TestCase
             [82, 96,110,124]
         ]),$this->toComplex($C->toArray()));
 
+        // float64
+        $A = $this->array([
+            [1,2,3],
+            [2,4,5],
+            [3,5,6],
+        ],dtype:NDArray::float64);
+        $B = $this->array([
+            [1,2,3,4],
+            [5,6,7,8],
+            [9,10,11,12],
+        ],dtype:NDArray::float64);
+        $alpha = 1.0;
+        $beta  = 0.0;
+        $C = $this->zeros([3,4],dtype:NDArray::float64);
+
+        [
+            $order,$side,$uplo,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb,
+            $beta,
+            $CC,$offC,$ldc
+        ] = $this->translate_symm($A,$B,alpha:$alpha,beta:$beta,C:$C);
+
+        $blas->symm(
+            $order,
+            $side,$uplo,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb,
+            $beta,
+            $CC,$offC,$ldc
+        );
+
+        $this->assertEquals([
+            [38, 44, 50, 56],
+            [67, 78, 89,100],
+            [82, 96,110,124]
+        ],$C->toArray());
+
         // complex128
         $A = $this->array($this->toComplex([
             [1,2,3],
@@ -4544,6 +4551,7 @@ class BlasTest extends TestCase
             [67, 78, 89,100],
             [82, 96,110,124]
         ]),$this->toComplex($C->toArray()));
+
     }
 
     public function testSyrkNormal()
@@ -4585,40 +4593,6 @@ class BlasTest extends TestCase
             [ 0,  0,  0,365],
         ],$C->toArray());
 
-        // float64
-        $A = $this->array([
-            [ 1, 2, 3],
-            [ 4, 5, 6],
-            [ 7, 8, 9],
-            [10,11,12],
-        ],dtype:NDArray::float64);
-        $C = $this->zeros([4,4],dtype:NDArray::float64);
-
-        [
-            $order,$uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $beta,
-            $CC,$offC,$ldc
-        ] = $this->translate_syrk($A,C:$C);
-
-        $blas->syrk(
-            $order,$uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $beta,
-            $CC,$offC,$ldc
-        );
-
-        $this->assertEquals([
-            [14, 32, 50, 68],
-            [ 0, 77,122,167],
-            [ 0,  0,194,266],
-            [ 0,  0,  0,365],
-        ],$C->toArray());
-
         // complex64
         $A = $this->array($this->toComplex([
             [ 1, 2, 3],
@@ -4627,41 +4601,6 @@ class BlasTest extends TestCase
             [10,11,12],
         ]),dtype:NDArray::complex64);
         $C = $this->zeros([4,4],dtype:NDArray::complex64);
-
-        [
-            $order,$uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $beta,
-            $CC,$offC,$ldc
-        ] = $this->translate_syrk($A,C:$C);
-
-        $blas->syrk(
-            $order,
-            $uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $beta,
-            $CC,$offC,$ldc
-        );
-
-        $this->assertEquals($this->toComplex([
-            [14, 32, 50, 68],
-            [ 0, 77,122,167],
-            [ 0,  0,194,266],
-            [ 0,  0,  0,365],
-        ]),$this->toComplex($C->toArray()));
-
-        // complex128
-        $A = $this->array($this->toComplex([
-            [ 1, 2, 3],
-            [ 4, 5, 6],
-            [ 7, 8, 9],
-            [10,11,12],
-        ]),dtype:NDArray::complex128);
-        $C = $this->zeros([4,4],dtype:NDArray::complex128);
 
         [
             $order,$uplo,$trans,
@@ -4722,6 +4661,75 @@ class BlasTest extends TestCase
             [C( 0,i: 0),C(74,i:30),C(119,i:39),C(164,i:48)],
             [C( 0,i: 0),C( 0,i: 0),C(191,i:48),C(263,i:57)],
             [C( 0,i: 0),C( 0,i: 0),C(  0,i: 0),C(362,i:66)],
+        ]),$this->toComplex($C->toArray()));
+
+        // float64
+        $A = $this->array([
+            [ 1, 2, 3],
+            [ 4, 5, 6],
+            [ 7, 8, 9],
+            [10,11,12],
+        ],dtype:NDArray::float64);
+        $C = $this->zeros([4,4],dtype:NDArray::float64);
+
+        [
+            $order,$uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $beta,
+            $CC,$offC,$ldc
+        ] = $this->translate_syrk($A,C:$C);
+
+        $blas->syrk(
+            $order,$uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $beta,
+            $CC,$offC,$ldc
+        );
+
+        $this->assertEquals([
+            [14, 32, 50, 68],
+            [ 0, 77,122,167],
+            [ 0,  0,194,266],
+            [ 0,  0,  0,365],
+        ],$C->toArray());
+
+        // complex128
+        $A = $this->array($this->toComplex([
+            [ 1, 2, 3],
+            [ 4, 5, 6],
+            [ 7, 8, 9],
+            [10,11,12],
+        ]),dtype:NDArray::complex128);
+        $C = $this->zeros([4,4],dtype:NDArray::complex128);
+
+        [
+            $order,$uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $beta,
+            $CC,$offC,$ldc
+        ] = $this->translate_syrk($A,C:$C);
+
+        $blas->syrk(
+            $order,
+            $uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $beta,
+            $CC,$offC,$ldc
+        );
+
+        $this->assertEquals($this->toComplex([
+            [14, 32, 50, 68],
+            [ 0, 77,122,167],
+            [ 0,  0,194,266],
+            [ 0,  0,  0,365],
         ]),$this->toComplex($C->toArray()));
 
     }
@@ -4937,49 +4945,6 @@ class BlasTest extends TestCase
             [ 0,  0,  0,668]
         ],$C->toArray());
 
-        // float64
-        $A = $this->array([
-            [1,2,3],
-            [4,5,6],
-            [7,8,9],
-            [10,11,12],
-        ],dtype:NDArray::float64);
-        $B = $this->array([
-            [1,3,5],
-            [2,4,6],
-            [7,9,11],
-            [8,10,12],
-        ],dtype:NDArray::float64);
-        $C = $this->zeros([4,4],dtype:NDArray::float64);
-
-        [
-            $order,$uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb,
-            $beta,
-            $CC,$offC,$ldc
-        ] = $this->translate_syr2k($A,$B,C:$C);
-
-        $blas->syr2k(
-            $order,
-            $uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb,
-            $beta,
-            $CC,$offC,$ldc
-        );
-
-        $this->assertEquals([
-            [44, 77,134,167],
-            [ 0,128,239,290],
-            [ 0,  0,440,545],
-            [ 0,  0,  0,668]
-        ],$C->toArray());
-
         // complex64
         $A = $this->array($this->toComplex([
             [1,2,3],
@@ -4994,49 +4959,6 @@ class BlasTest extends TestCase
             [8,10,12],
         ]),dtype:NDArray::complex64);
         $C = $this->zeros([4,4],dtype:NDArray::complex64);
-
-        [
-            $order,$uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb,
-            $beta,
-            $CC,$offC,$ldc
-        ] = $this->translate_syr2k($A,$B,C:$C);
-
-        $blas->syr2k(
-            $order,
-            $uplo,$trans,
-            $N,$K,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb,
-            $beta,
-            $CC,$offC,$ldc
-        );
-
-        $this->assertEquals($this->toComplex([
-            [44, 77,134,167],
-            [ 0,128,239,290],
-            [ 0,  0,440,545],
-            [ 0,  0,  0,668]
-        ]),$this->toComplex($C->toArray()));
-
-        // complex128
-        $A = $this->array($this->toComplex([
-            [1,2,3],
-            [4,5,6],
-            [7,8,9],
-            [10,11,12],
-        ]),dtype:NDArray::complex128);
-        $B = $this->array($this->toComplex([
-            [1,3,5],
-            [2,4,6],
-            [7,9,11],
-            [8,10,12],
-        ]),dtype:NDArray::complex128);
-        $C = $this->zeros([4,4],dtype:NDArray::complex128);
 
         [
             $order,$uplo,$trans,
@@ -5107,6 +5029,92 @@ class BlasTest extends TestCase
             [C( 0,i: 0),C(128,i: 0),C(239,i: 0),C(290,i: 0)],
             [C( 0,i: 0),C(  0,i: 0),C(440,i: 0),C(545,i: 0)],
             [C( 0,i: 0),C(  0,i: 0),C(  0,i: 0),C(668,i: 0)],
+        ]),$this->toComplex($C->toArray()));
+
+        // float64
+        $A = $this->array([
+            [1,2,3],
+            [4,5,6],
+            [7,8,9],
+            [10,11,12],
+        ],dtype:NDArray::float64);
+        $B = $this->array([
+            [1,3,5],
+            [2,4,6],
+            [7,9,11],
+            [8,10,12],
+        ],dtype:NDArray::float64);
+        $C = $this->zeros([4,4],dtype:NDArray::float64);
+
+        [
+            $order,$uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb,
+            $beta,
+            $CC,$offC,$ldc
+        ] = $this->translate_syr2k($A,$B,C:$C);
+
+        $blas->syr2k(
+            $order,
+            $uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb,
+            $beta,
+            $CC,$offC,$ldc
+        );
+
+        $this->assertEquals([
+            [44, 77,134,167],
+            [ 0,128,239,290],
+            [ 0,  0,440,545],
+            [ 0,  0,  0,668]
+        ],$C->toArray());
+
+        // complex128
+        $A = $this->array($this->toComplex([
+            [1,2,3],
+            [4,5,6],
+            [7,8,9],
+            [10,11,12],
+        ]),dtype:NDArray::complex128);
+        $B = $this->array($this->toComplex([
+            [1,3,5],
+            [2,4,6],
+            [7,9,11],
+            [8,10,12],
+        ]),dtype:NDArray::complex128);
+        $C = $this->zeros([4,4],dtype:NDArray::complex128);
+
+        [
+            $order,$uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb,
+            $beta,
+            $CC,$offC,$ldc
+        ] = $this->translate_syr2k($A,$B,C:$C);
+
+        $blas->syr2k(
+            $order,
+            $uplo,$trans,
+            $N,$K,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb,
+            $beta,
+            $CC,$offC,$ldc
+        );
+
+        $this->assertEquals($this->toComplex([
+            [44, 77,134,167],
+            [ 0,128,239,290],
+            [ 0,  0,440,545],
+            [ 0,  0,  0,668]
         ]),$this->toComplex($C->toArray()));
 
     }
@@ -5294,40 +5302,6 @@ class BlasTest extends TestCase
             [ 54, 60, 66, 72]
         ],$B->toArray());
 
-        // float64
-        $A = $this->array([
-            [1,2,3],
-            [9,4,5],
-            [9,9,6],
-        ],dtype:NDArray::float64);
-        $B = $this->array([
-            [1, 2, 3, 4],
-            [5, 6, 7, 8],
-            [9,10,11,12],
-        ],dtype:NDArray::float64);
-
-        [
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        ] = $this->translate_trmm($A,$B);
-
-        $blas->trmm(
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        );
-
-        $this->assertEquals([
-            [ 38, 44, 50, 56],
-            [ 65, 74, 83, 92],
-            [ 54, 60, 66, 72]
-        ],$B->toArray());
-
         // complex64
         $A = $this->array($this->toComplex([
             [1,2,3],
@@ -5339,40 +5313,6 @@ class BlasTest extends TestCase
             [5, 6, 7, 8],
             [9,10,11,12],
         ]),dtype:NDArray::complex64);
-
-        [
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        ] = $this->translate_trmm($A,$B);
-
-        $blas->trmm(
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        );
-
-        $this->assertEquals($this->toComplex([
-            [ 38, 44, 50, 56],
-            [ 65, 74, 83, 92],
-            [ 54, 60, 66, 72]
-        ]),$this->toComplex($B->toArray()));
-
-        // complex128
-        $A = $this->array($this->toComplex([
-            [1,2,3],
-            [9,4,5],
-            [9,9,6],
-        ]),dtype:NDArray::complex128);
-        $B = $this->array($this->toComplex([
-            [1, 2, 3, 4],
-            [5, 6, 7, 8],
-            [9,10,11,12],
-        ]),dtype:NDArray::complex128);
 
         [
             $order,$side,$uplo,$trans,$diag,
@@ -5428,6 +5368,74 @@ class BlasTest extends TestCase
             [C(38,i:67),C(44,i:82),C(50,i:97),C(56,i:112)],
             [C(65,i:33),C(74,i:38),C(83,i:43),C(92,i: 48)],
             [C(54,i: 9),C(60,i:10),C(66,i:11),C(72,i: 12)]
+        ]),$this->toComplex($B->toArray()));
+
+        // float64
+        $A = $this->array([
+            [1,2,3],
+            [9,4,5],
+            [9,9,6],
+        ],dtype:NDArray::float64);
+        $B = $this->array([
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9,10,11,12],
+        ],dtype:NDArray::float64);
+
+        [
+            $order,$side,$uplo,$trans,$diag,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb
+        ] = $this->translate_trmm($A,$B);
+
+        $blas->trmm(
+            $order,$side,$uplo,$trans,$diag,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb
+        );
+
+        $this->assertEquals([
+            [ 38, 44, 50, 56],
+            [ 65, 74, 83, 92],
+            [ 54, 60, 66, 72]
+        ],$B->toArray());
+
+        // complex128
+        $A = $this->array($this->toComplex([
+            [1,2,3],
+            [9,4,5],
+            [9,9,6],
+        ]),dtype:NDArray::complex128);
+        $B = $this->array($this->toComplex([
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9,10,11,12],
+        ]),dtype:NDArray::complex128);
+
+        [
+            $order,$side,$uplo,$trans,$diag,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb
+        ] = $this->translate_trmm($A,$B);
+
+        $blas->trmm(
+            $order,$side,$uplo,$trans,$diag,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb
+        );
+
+        $this->assertEquals($this->toComplex([
+            [ 38, 44, 50, 56],
+            [ 65, 74, 83, 92],
+            [ 54, 60, 66, 72]
         ]),$this->toComplex($B->toArray()));
 
     }
@@ -5628,16 +5636,17 @@ class BlasTest extends TestCase
         $blas = $this->getBlas();
 
         // float32
+        $dtype = NDArray::float32;
         $A = $this->array([
             [1,2,3],
             [9,4,5],
             [9,9,6],
-        ],dtype:NDArray::float32);
+        ],dtype:$dtype);
         $B = $this->array([
             [ 7, 8],
             [10,11],
             [13,14],
-        ],dtype:NDArray::float32);
+        ],dtype:$dtype);
         [
             $order,$side,$uplo,$trans,$diag,
             $M,$N,
@@ -5673,17 +5682,72 @@ class BlasTest extends TestCase
 
         $this->assertTrue($this->isclose($C,$origB));
 
+        // complex64
+        $dtype = NDArray::complex64;
+        $A = $this->array($this->toComplex([
+            [1,2,3],
+            [9,4,5],
+            [9,9,6],
+        ]),dtype:$dtype);
+        $B = $this->array($this->toComplex([
+            [ 7, 8],
+            [10,11],
+            [13,14],
+        ]),dtype:$dtype);
+        [
+            $order,$side,$uplo,$trans,$diag,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb
+        ] = $this->translate_trsm($A,$B);
+        $origB = $this->zeros($B->shape(),dtype:$B->dtype());
+        $blas->copy(count($BB),$BB,0,1,$origB->buffer(),0,1);
+
+        $blas->trsm(
+            $order,$side,$uplo,$trans,$diag,
+            $M,$N,
+            $alpha,
+            $AA,$offA,$lda,
+            $BB,$offB,$ldb
+        );
+        $RA = $this->array($this->toComplex([
+            [1,2,3],
+            [0,4,5],
+            [0,0,6],
+        ]),dtype:$A->dtype());
+        $C = $this->zeros($B->shape(),dtype:$B->dtype());
+        $blas->gemm(
+            BLAS::RowMajor,$trans,BLAS::NoTrans,
+            $M,$N,$M,
+            C(1.0),
+            $RA->buffer(),0,$M,
+            $BB,$offB,$ldb,
+            C(0.0),
+            $C->buffer(),0,$N
+        );
+
+        //echo "=====C=====\n";
+        //$CC = $C->buffer();
+        //$len = count($CC);
+        //for($i=0;$i<$len;++$i) {
+        //    echo $CC[$i]->real.','.$CC[$i]->imag."\n";
+        //}
+
+        $this->assertTrue($this->isclose($C,$origB,atol:1e-6));
+
         // float64
+        $dtype = NDArray::float64;
         $A = $this->array([
             [1,2,3],
             [9,4,5],
             [9,9,6],
-        ],dtype:NDArray::float64);
+        ],dtype:$dtype);
         $B = $this->array([
             [ 7, 8],
             [10,11],
             [13,14],
-        ],dtype:NDArray::float64);
+        ],dtype:$dtype);
         [
             $order,$side,$uplo,$trans,$diag,
             $M,$N,
@@ -5725,17 +5789,18 @@ class BlasTest extends TestCase
         //}
         $this->assertTrue($this->isclose($C,$origB));
 
-        // complex64
+        // complex128
+        $dtype = NDArray::complex128;
         $A = $this->array($this->toComplex([
             [1,2,3],
             [9,4,5],
             [9,9,6],
-        ]),dtype:NDArray::complex64);
+        ]),dtype:$dtype);
         $B = $this->array($this->toComplex([
             [ 7, 8],
             [10,11],
             [13,14],
-        ]),dtype:NDArray::complex64);
+        ]),dtype:$dtype);
         [
             $order,$side,$uplo,$trans,$diag,
             $M,$N,
@@ -6143,37 +6208,6 @@ class BlasTest extends TestCase
             [3,6,9,12],
         ],$B->toArray());
 
-        // float64
-        $A = $this->array([
-            [1,2,3],
-            [4,5,6],
-            [7,8,9],
-            [10,11,12],
-        ],dtype:NDArray::float64);
-        $B = $this->zeros([3,4],dtype:NDArray::float64);
-
-        [
-            $order,$trans,
-            $M,$N,
-            $alpha,
-            $AA, $offA, $ldA,
-            $BB, $offB, $ldB,
-        ] = $this->translate_omatcopy($A,trans:true,B:$B);
-
-        $blas->omatcopy(
-            $order,$trans,
-            $M,$N,
-            $alpha,
-            $AA, $offA, $ldA,
-            $BB, $offB, $ldB,
-        );
-
-        $this->assertEquals([
-            [1,4,7,10],
-            [2,5,8,11],
-            [3,6,9,12],
-        ],$B->toArray());
-
         // complex64 trans and conj
         $A = $this->array($this->toComplex([
             [C(1,i:100),C(2,i:200),3],
@@ -6202,37 +6236,6 @@ class BlasTest extends TestCase
         $this->assertEquals($this->toComplex([
             [C(1,i:-100),4,7,10],
             [C(2,i:-200),5,8,11],
-            [3,6,9,12],
-        ]),$this->toComplex($B->toArray()));
-
-        // complex128
-        $A = $this->array($this->toComplex([
-            [1,2,3],
-            [4,5,6],
-            [7,8,9],
-            [10,11,12],
-        ]),dtype:NDArray::complex128);
-        $B = $this->zeros([3,4],dtype:NDArray::complex128);
-
-        [
-            $order,$trans,
-            $M,$N,
-            $alpha,
-            $AA, $offA, $ldA,
-            $BB, $offB, $ldB,
-        ] = $this->translate_omatcopy($A,trans:true,B:$B);
-
-        $blas->omatcopy(
-            $order,$trans,
-            $M,$N,
-            $alpha,
-            $AA, $offA, $ldA,
-            $BB, $offB, $ldB,
-        );
-
-        $this->assertEquals($this->toComplex([
-            [1,4,7,10],
-            [2,5,8,11],
             [3,6,9,12],
         ]),$this->toComplex($B->toArray()));
 
@@ -6298,6 +6301,69 @@ class BlasTest extends TestCase
             [10,11,12],
         ]),$this->toComplex($B->toArray()));
 
+        // float64
+        $type = NDArray::float64;
+        $A = $this->array([
+            [1,2,3],
+            [4,5,6],
+            [7,8,9],
+            [10,11,12],
+        ],dtype:$type);
+        $B = $this->zeros([3,4],dtype:$type);
+
+        [
+            $order,$trans,
+            $M,$N,
+            $alpha,
+            $AA, $offA, $ldA,
+            $BB, $offB, $ldB,
+        ] = $this->translate_omatcopy($A,trans:true,B:$B);
+
+        $blas->omatcopy(
+            $order,$trans,
+            $M,$N,
+            $alpha,
+            $AA, $offA, $ldA,
+            $BB, $offB, $ldB,
+        );
+
+        $this->assertEquals([
+            [1,4,7,10],
+            [2,5,8,11],
+            [3,6,9,12],
+        ],$B->toArray());
+
+        // complex128
+        $type = NDArray::complex128;
+        $A = $this->array($this->toComplex([
+            [1,2,3],
+            [4,5,6],
+            [7,8,9],
+            [10,11,12],
+        ]),dtype:$type);
+        $B = $this->zeros([3,4],dtype:$type);
+
+        [
+            $order,$trans,
+            $M,$N,
+            $alpha,
+            $AA, $offA, $ldA,
+            $BB, $offB, $ldB,
+        ] = $this->translate_omatcopy($A,trans:true,B:$B);
+
+        $blas->omatcopy(
+            $order,$trans,
+            $M,$N,
+            $alpha,
+            $AA, $offA, $ldA,
+            $BB, $offB, $ldB,
+        );
+
+        $this->assertEquals($this->toComplex([
+            [1,4,7,10],
+            [2,5,8,11],
+            [3,6,9,12],
+        ]),$this->toComplex($B->toArray()));
     }
 
 }

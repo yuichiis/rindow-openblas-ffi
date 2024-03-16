@@ -20,6 +20,11 @@ function C(
 
 trait Utils
 {
+    protected function fp64() : bool
+    {
+        return true;
+    }
+
     public function array(mixed $array=null, int $dtype=null, array $shape=null) : object
     {
         $ndarray = new class ($array, $dtype, $shape) implements NDArray {
@@ -122,9 +127,17 @@ trait Utils
                     }
                 }  else {
                     $A = [];
-                    for($i=0; $i<$size; $i++) {
-                        $A[$i] = $F[$idx];
-                        $idx++;
+                    if($this->isComplex($this->dtype)) {
+                        for($i=0; $i<$size; $i++) {
+                            $v = $F[$idx];
+                            $A[$i] = C($v->real,$v->imag);
+                            $idx++;
+                        }
+                    } else {
+                        for($i=0; $i<$size; $i++) {
+                            $A[$i] = $F[$idx];
+                            $idx++;
+                        }
                     }
                 }
                 return $A;
@@ -157,7 +170,11 @@ trait Utils
             public function toArray()
             {
                 if(count($this->shape)==0) {
-                    return $this->buffer[$this->offset];
+                    $v = $this->buffer[$this->offset];
+                    if($this->isComplex($this->dtype)) {
+                        $v = C($v->real,$v->imag);
+                    }
+                    return $v;
                 }
                 $idx = $this->offset;
                 return $this->flat2Array($this->buffer, $idx, $this->shape);
