@@ -13,7 +13,7 @@ class OpenBLASFactory
     private static ?FFI $ffi = null;
     private static ?FFI $ffiLapacke = null;
     protected array $libs_win = ['libopenblas.dll'];
-    protected array $libs_linux = ['libopenblas.so','libopenblas.so.0','/usr/lib/x86_64-linux-gnu/libopenblas.so.0'];
+    protected array $libs_linux = ['libopenblas.so','libopenblas.so.0','/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so'];
     protected array $lapacke_win = ['libopenblas.dll'];
     protected array $lapacke_linux = ['liblapacke.so','liblapacke.so.3','/usr/lib/x86_64-linux-gnu/liblapack.so.3'];
 
