@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Rindow\\OpenBlas\\FFI\\": "src/"
+            "Rindow\\OpenBLAS\\FFI\\": "src/"
         }
     }
 }
