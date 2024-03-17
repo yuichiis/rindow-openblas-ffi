@@ -15,13 +15,8 @@ jobs:
       - name: Checkout codes
         uses: "actions/checkout@v4"
 
-      - name: Cache OpenBLAS 
-        uses: actions/cache@v2
-        with:
-          key: libopenblas-base
-          path: ${{ github.workspace }}/.openblas
-          restore-keys: |
-            openblas
+      - name: Install OpenBLAS 
+        run: apt install -y libopenblas-base
 
       - name: Composer
         uses: php-actions/composer@v6
