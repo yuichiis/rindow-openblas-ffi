@@ -16,7 +16,8 @@ jobs:
         uses: "actions/checkout@v4"
 
       - name: Install OpenBLAS 
-        run: sudo apt install -y libopenblas-base
+        run: 
+          sudo apt install -y libopenblas-base liblapack-dev
 
       - name: Composer
         uses: php-actions/composer@v6
