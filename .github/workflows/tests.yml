@@ -16,8 +16,10 @@ jobs:
         uses: "actions/checkout@v4"
 
       - name: Install OpenBLAS 
-        run: 
-          sudo apt install -y libopenblas-base liblapacke
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libopenblas-dev liblapacke-dev
+          pkg-config openblas --libs
 
       - name: LS HOME
         run: |
