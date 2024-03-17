@@ -19,9 +19,9 @@ jobs:
         run: 
           sudo apt install -y libopenblas-base liblapacke
 
-      - name: Install OpenBLAS 
+      - name: LS HOME
         run: 
-          ls -la $HOME
+          ls -la $HOME && ls -la $HOME/.local && ls -la $HOME/work
 
       - name: Composer
         uses: php-actions/composer@v6
