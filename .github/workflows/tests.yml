@@ -23,6 +23,7 @@ jobs:
         run: |
           ls -la $HOME && ls -la $HOME/.local && ls -la $HOME/work
           ls -la /usr/lib/x86_64-linux-gnu
+          ls -la /usr/lib/x86_64-linux-gnu/libopenblas.so.0
 
       - name: Composer
         uses: php-actions/composer@v6
