@@ -27,6 +27,9 @@ class OpenBLASFactory
         if(self::$ffi!==null) {
             return;
         }
+        if(!extension_loaded('ffi')) {
+            return;
+        }
         //
         // blas
         //
