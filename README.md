@@ -50,7 +50,7 @@ C> composer require rindow/rindow-openblas-ffi
 Use the apt command to install the deb file. 
 
 ```shell
-$ sudo apt install libopenblas-base
+$ sudo apt install libopenblas-base libpapacke
 ```
 
 And then set it up using composer.
