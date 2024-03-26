@@ -14,8 +14,7 @@ jobs:
     steps:
       - name: Install OpenBLAS
         run: |
-          sudo apt update
-          sudo apt install -y libopenblas-base libpapacke
+          sudo apt install -y libopenblas-base liblapacke
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
