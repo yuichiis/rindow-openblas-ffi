@@ -19,7 +19,7 @@ jobs:
           # PHP Extras
           coverage: none
           tools: composer, phpunit:10.5
-          ini-values: "memory_limit=-1"
+          #ini-values: "memory_limit=-1"
           extensions: ffi
 
       - name: Install OpenBLAS
@@ -38,10 +38,6 @@ jobs:
       - name: Composer
         run: composer update
 
-      # Execution
-      - name: Execute Tests
-        run: phpunit -c tests --filter LapackTest
-
       #- name: PHPUnit Tests
       #  uses: php-actions/phpunit@v3
       #  with:
@@ -49,3 +45,7 @@ jobs:
       #    version: 10.5
       #    php_version: ${{ matrix.php }}
       #    filter: ReleaseTest
+
+      - name: Execute Tests
+        run: phpunit -c tests
+
