@@ -35,6 +35,9 @@ jobs:
       #    php_version: ${{ matrix.php }}
       #    php_extensions: ffi
 
+      - name: Composer
+        run: composer update
+
       # Execution
       - name: Execute Tests
         run: phpunit -c tests --filter ReleaseTest
