@@ -40,7 +40,7 @@ jobs:
 
       # Execution
       - name: Execute Tests
-        run: phpunit -c tests --filter ReleaseTest
+        run: phpunit -c tests --filter LapackTest
 
       #- name: PHPUnit Tests
       #  uses: php-actions/phpunit@v3
