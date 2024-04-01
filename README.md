@@ -30,7 +30,7 @@ How to download and setup
 ### Windows
 The OpenBLAS Library release number is included in the filename of the rindow-openblas pre-built archive file.
 
-- https://github.com/xianyi/OpenBLAS/releases
+- https://github.com/OpenMathLib/OpenBLAS/releases
 
 Unzip it to a suitable location and set the execution path in the bin directory.
 
@@ -47,11 +47,23 @@ C> composer require rindow/rindow-openblas-ffi
 ```
 
 ### Ubuntu
-Use the apt command to install the deb file. 
+Since rindow-matlib currently uses OpenMP, choose the OpenMP version for OpenBLAS as well.
+
+Using the pthread version of OpenBLAS can cause contention, making it unstable and slow.
 
 ```shell
-$ sudo apt install libopenblas-base liblapacke
+$ sudo apt install libopenblas0-openmp liblapacke
 ```
+
+If you have already installed the pthread version of OpenBLAS, you can switch to it using the update-alternatives command.
+
+```shell
+$ sudo update-alternatives --config libopenblas.so.0-x86_64-linux-gnu
+$ sudo update-alternatives --config liblapack.so.3-x86_64-linux-gnu
+```
+
+If you really want to use the pthread version of OpenBLAS, please switch to the serial version of rindow-matlib.
+
 
 And then set it up using composer.
 ```shell
