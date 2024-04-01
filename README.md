@@ -53,6 +53,7 @@ Using the pthread version of OpenBLAS can cause contention, making it unstable a
 
 ```shell
 $ sudo apt install libopenblas0-openmp liblapacke
+$ sudo apt remove libopenblas0-pthread
 ```
 
 If you have already installed the pthread version of OpenBLAS, you can switch to it using the update-alternatives command.
@@ -64,6 +65,7 @@ $ sudo update-alternatives --config liblapack.so.3-x86_64-linux-gnu
 
 If you really want to use the pthread version of OpenBLAS, please switch to the serial version of rindow-matlib.
 
+There are no operational mode conflicts with OpenBLAS on Windows.
 
 And then set it up using composer.
 ```shell
