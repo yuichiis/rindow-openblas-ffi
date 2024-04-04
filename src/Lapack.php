@@ -3,7 +3,7 @@ namespace Rindow\OpenBLAS\FFI;
 
 use Interop\Polite\Math\Matrix\NDArray;
 use InvalidArgumentException;
-
+use RuntimeException;
 use FFI;
 
 use Interop\Polite\Math\Matrix\LinearBuffer as BufferInterface;
