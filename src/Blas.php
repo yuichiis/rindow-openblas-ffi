@@ -26,7 +26,7 @@ class Blas
         $this->ffi = $ffi;
     }
 
-    public function getFFI()
+    public function getFFI() : FFI
     {
         return $this->ffi;
     }
