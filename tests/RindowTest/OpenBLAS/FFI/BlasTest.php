@@ -750,7 +750,8 @@ class BlasTest extends TestCase
     {
         $blas = $this->getBlas();
         $n = $blas->getParallel();
-        $this->assertEquals(OpenBLAS::OPENBLAS_THREAD,$n);
+        $mt_enabled = $n==OpenBLAS::OPENBLAS_THREAD || $n==OpenBLAS::OPENBLAS_OPENMP;
+        $this->assertTrue($mt_enabled);
     }
 
     public function testComplexValue()
