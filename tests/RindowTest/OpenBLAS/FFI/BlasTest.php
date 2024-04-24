@@ -208,7 +208,6 @@ class BlasTest extends TestCase
             $P = $this->zeros([5],dtype:$X->dtype());
         }
         $this->copy($X->reshape([1]),$B1->reshape([1]));
-        $B2 = $Y->reshape([])->toArray();
 
         $DD1 = $D1->buffer();
         $offD1 = $D1->offset();
@@ -216,13 +215,17 @@ class BlasTest extends TestCase
         $offD2 = $D2->offset();
         $BB1 = $B1->buffer();
         $offB1 = $B1->offset();
+        $BB1 = $B1->buffer();
+        $offB1 = $B1->offset();
+        $BB2 = $Y->buffer();
+        $offB2 = $Y->offset();
         $PP = $P->buffer();
         $offP = $P->offset();
         return [
             $DD1,$offD1,
             $DD2,$offD2,
             $BB1,$offB1,
-            $B2,
+            $BB2,$offB2,
             $PP,$offP,
         ];
     }
@@ -2479,10 +2482,10 @@ class BlasTest extends TestCase
         foreach($inputs as $idx => [$xx,$yy]) {
             $X = $this->array($xx,dtype:$dtype);
             $Y = $this->array($yy,dtype:$dtype);
-            [$DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$B2,$PP,$offP] =
+            [$DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$BB2,$offB2,$PP,$offP] =
                 $this->translate_rotmg($X,$Y);
            
-            $blas->rotmg($DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$B2,$PP,$offP);
+            $blas->rotmg($DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$BB2,$offB2,$PP,$offP);
 
             $d1 = $DD1[0];
             $d2 = $DD2[0];
@@ -2550,10 +2553,10 @@ class BlasTest extends TestCase
         foreach($inputs as $idx => [$xx,$yy]) {
             $X = $this->array($xx,dtype:$dtype);
             $Y = $this->array($yy,dtype:$dtype);
-            [$DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$B2,$PP,$offP] =
+            [$DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$BB2,$offB2,$PP,$offP] =
                 $this->translate_rotmg($X,$Y);
            
-            $blas->rotmg($DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$B2,$PP,$offP);
+            $blas->rotmg($DD1,$offD1,$DD2,$offD2,$BB1,$offB1,$BB2,$offB2,$PP,$offP);
 
             $d1 = $DD1[0];
             $d2 = $DD2[0];

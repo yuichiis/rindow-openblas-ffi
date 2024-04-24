@@ -614,7 +614,7 @@ class Blas
         BufferInterface $D1, int $offsetD1,
         BufferInterface $D2, int $offsetD2,
         BufferInterface $B1, int $offsetB1,
-        float $B2,
+        BufferInterface $B2, int $offsetB2,
         BufferInterface $P, int $offsetP
         ) : void
     {
@@ -626,13 +626,16 @@ class Blas
         $this->assert_vector_buffer_spec("D2", $D2, 1, $offsetD2, 1);
         // Check Buffer B1
         $this->assert_vector_buffer_spec("B1", $B1, 1, $offsetB1, 1);
+        // Check Buffer B2
+        $this->assert_vector_buffer_spec("B2", $B1, 1, $offsetB2, 1);
         // Check Buffer P
         $this->assert_vector_buffer_spec("P",  $P,  5, $offsetP,  1);
 
         // Check Buffer A and B and C and S
         $dtype = $D1->dtype();
-        if($dtype!=$D2->dtype()||$dtype!=$B1->dtype()||$dtype!=$P->dtype()) {
-            throw new InvalidArgumentException("Unmatch data type for D1,D2,B1 and P");
+        if($dtype!=$D2->dtype()||$dtype!=$B1->dtype()||
+            $dtype!=$B2->dtype()||$dtype!=$P->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for D1,D2,B1,B2 and P");
         }
 
         switch($dtype) {
@@ -641,7 +644,7 @@ class Blas
                     $D1->addr($offsetD1),
                     $D2->addr($offsetD2),
                     $B1->addr($offsetB1),
-                    $B2,
+                    $B2[$offsetB2],
                     $P->addr($offsetP),
                 );
                 break;
@@ -651,7 +654,7 @@ class Blas
                     $D1->addr($offsetD1),
                     $D2->addr($offsetD2),
                     $B1->addr($offsetB1),
-                    $B2,
+                    $B2[$offsetB2],
                     $P->addr($offsetP),
                 );
                 break;
