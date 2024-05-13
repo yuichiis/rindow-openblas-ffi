@@ -82,8 +82,7 @@ jobs:
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
-          brew install libomp
           brew install openblas
+          brew install lapack
           echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
-          ls -Rl /opt/homebrew/Cellar/openblas/0.3.27
           phpunit -c tests
