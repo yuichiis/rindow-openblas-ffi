@@ -71,6 +71,7 @@ class OpenBLASFactory
             try {
                 $ffi = FFI::cdef($code,$filename);
             } catch(FFIException $e) {
+                echo $e->getMessage()."\n";
                 continue;
             }
             self::$ffi = $ffi;
