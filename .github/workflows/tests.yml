@@ -83,4 +83,5 @@ jobs:
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
           brew install openblas
+          echo $LDFLAGS
           phpunit -c tests
