@@ -17,13 +17,13 @@ class OpenBLASFactory
     /** @var array<string> $libs_linux */
     protected array $libs_linux = ['libopenblas.so.0'];
     /** @var array<string> $libs_mac */
-    protected array $libs_mac = ['libopenblas.dylib'];
+    protected array $libs_mac = ['libopenblas.0.dylib'];
     /** @var array<string> $lapacke_win */
     protected array $lapacke_win = ['libopenblas.dll'];
     /** @var array<string> $lapacke_linux */
     protected array $lapacke_linux = ['liblapacke.so.3'];
     /** @var array<string> $lapacke_mac */
-    protected array $lapacke_mac = ['libopenblas.dylib'];
+    protected array $lapacke_mac = ['libopenblas.0.dylib'];
 
     /**
      * @param array<string> $libFiles
