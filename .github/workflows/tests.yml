@@ -49,6 +49,7 @@ jobs:
       - name: Install OpenBLAS (macOS)
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
+          brew install libomp
           brew install openblas
 
       - name: Checkout codes
