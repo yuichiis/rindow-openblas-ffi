@@ -37,7 +37,7 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:10.5
+          tools: composer, phpunit:10.5, phpstan
           #ini-values: "memory_limit=512M"
           extensions: ffi
 
@@ -45,15 +45,6 @@ jobs:
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         run: |
           sudo apt install -y libopenblas0-openmp liblapacke
-
-      - name: Install OpenBLAS (macOS)
-        if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: |
-          if ! which brew &>/dev/null ; then echo "Could not find 'brew' command in PATH or standard locations."; fi
-          brew install libomp
-          echo success libomp
-          brew install openblas
-          echo success openblas
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
@@ -67,11 +58,14 @@ jobs:
       - name: Composer
         run: composer update
 
+      #- name: PHP Static Analysys
+      #  uses: php-actions/phpstan@v3
+      #  with:
+      #    php_version: ${{ matrix.php }}
+      #    path: src/
+
       - name: PHP Static Analysys
-        uses: php-actions/phpstan@v3
-        with:
-          php_version: ${{ matrix.php }}
-          path: src/
+        run: phpstan
 
       #- name: PHPUnit Tests
       #  uses: php-actions/phpunit@v3
@@ -82,5 +76,13 @@ jobs:
       #    filter: ReleaseTest
 
       - name: PHPUnit Tests
+        if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         run: phpunit -c tests
 
+      - name: PHPUnit Tests
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        run: |
+          if ! which brew &>/dev/null ; then echo "Could not find 'brew' command in PATH or standard locations."; fi
+          brew install libomp
+          brew install openblas
+          phpunit -c tests
