@@ -83,6 +83,6 @@ jobs:
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
           brew install openblas
-          brew install lapack
-          echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
           phpunit -c tests
+
+      #    brew install lapack
