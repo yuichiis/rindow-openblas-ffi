@@ -17,7 +17,7 @@ class OpenBLASFactory
     /** @var array<string> $libs_linux */
     protected array $libs_linux = ['libopenblas.so.0'];
     /** @var array<string> $libs_mac */
-    protected array $libs_mac = ['dummy-libopenblas.0.dylib'];
+    protected array $libs_mac = ['libopenblas.0.dylib'];
     /** @var array<string> $lapacke_win */
     protected array $lapacke_win = ['libopenblas.dll'];
     /** @var array<string> $lapacke_linux */
