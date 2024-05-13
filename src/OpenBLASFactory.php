@@ -16,10 +16,14 @@ class OpenBLASFactory
     protected array $libs_win = ['libopenblas.dll'];
     /** @var array<string> $libs_linux */
     protected array $libs_linux = ['libopenblas.so.0'];
+    /** @var array<string> $libs_mac */
+    protected array $libs_mac = ['libopenblas.dylib'];
     /** @var array<string> $lapacke_win */
     protected array $lapacke_win = ['libopenblas.dll'];
     /** @var array<string> $lapacke_linux */
     protected array $lapacke_linux = ['liblapacke.so.3'];
+    /** @var array<string> $lapacke_mac */
+    protected array $lapacke_mac = ['libopenblas.dylib'];
 
     /**
      * @param array<string> $libFiles
@@ -45,6 +49,8 @@ class OpenBLASFactory
         if($libFiles==null) {
             if(PHP_OS=='Linux') {
                 $libFiles = $this->libs_linux;
+            } elseif(PHP_OS=='Darwin') {
+                $libFiles = $this->libs_mac;
             } elseif(PHP_OS=='WINNT') {
                 $libFiles = $this->libs_win;
             } else {
@@ -77,6 +83,8 @@ class OpenBLASFactory
         if($lapackeLibs==null) {
             if(PHP_OS=='Linux') {
                 $lapackeLibs = $this->lapacke_linux;
+            } elseif(PHP_OS=='Darwin') {
+                $lapackeLibs = $this->lapacke_mac;
             } elseif(PHP_OS=='WINNT') {
                 $lapackeLibs = $this->lapacke_win;
             } else {
