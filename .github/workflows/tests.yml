@@ -49,7 +49,7 @@ jobs:
       - name: Install OpenBLAS (macOS)
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
-          if ! which brew &>/dev/null; then echo "Could not find 'brew' command in PATH or standard locations." exit 1 fi
+          if ! which brew &>/dev/null ; then echo "Could not find 'brew' command in PATH or standard locations."; fi
           brew install libomp
           echo success libomp
           brew install openblas
