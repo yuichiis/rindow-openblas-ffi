@@ -71,6 +71,7 @@ class OpenBLASFactory
             try {
                 $ffi = FFI::cdef($code,$filename);
             } catch(FFIException $e) {
+                echo "==== BLAS filename: ".$filename." ====\n";
                 echo $e->getMessage()."\n";
                 continue;
             }
@@ -110,6 +111,8 @@ class OpenBLASFactory
             try {
                 $ffiLapacke = FFI::cdef($code,$filename);
             } catch(FFIException $e) {
+                echo "==== LAPACKE filename: ".$filename." ====\n";
+                echo $e->getMessage()."\n";
                 continue;
             }
             self::$ffiLapacke = $ffiLapacke;

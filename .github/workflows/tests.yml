@@ -85,4 +85,3 @@ jobs:
           brew install openblas
           phpunit -c tests --filter ReleaseTest
 
-      #    brew install lapack
