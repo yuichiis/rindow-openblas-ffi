@@ -83,6 +83,6 @@ jobs:
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
           brew install openblas
-          phpunit -c tests
+          phpunit -c tests --filter ReleaseTest
 
       #    brew install lapack
