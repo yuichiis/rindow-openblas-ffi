@@ -66,7 +66,7 @@ extern void appleblas_dgeadd(const enum CBLAS_ORDER ORDER,
  * then the BLAS call will return normally following its execution without
  * performing any further processing.                                         */
 
-typedef void (*BLASParamErrorProc);(const char * funcName, const char * paramName,
+typedef void (*BLASParamErrorProc)(const char * funcName, const char * paramName,
                                    const __LAPACK_int * paramPos,  const __LAPACK_int * paramValue);
 
 void SetBLASParamErrorProc(BLASParamErrorProc __ErrorProc);
