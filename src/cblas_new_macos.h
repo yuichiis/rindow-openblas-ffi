@@ -1,6 +1,6 @@
 typedef int32_t                     lapack_int;
 typedef struct _openblas_complex_float { float real, imag; } __LAPACK_float_complex;
-typedef struct _openblas_complex_double { double real, imag; } __LAPACK_float_complex;
+typedef struct _openblas_complex_double { double real, imag; } __LAPACK_double_complex;
 
 enum CBLAS_ORDER {CblasRowMajor=101, CblasColMajor=102 };
 enum CBLAS_TRANSPOSE {CblasNoTrans=111, CblasTrans=112, CblasConjTrans=113, AtlasConj=114};
