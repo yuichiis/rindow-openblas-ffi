@@ -1,4 +1,4 @@
-typedef int32_t                     lapack_int;
+typedef int32_t                     __LAPACK_int;
 typedef struct _openblas_complex_float { float real, imag; } __LAPACK_float_complex;
 typedef struct _openblas_complex_double { double real, imag; } __LAPACK_double_complex;
 
