@@ -631,6 +631,3 @@ void cblas_ztrsm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_DIAG DIAG, const __LAPACK_int M, const __LAPACK_int N,
                  const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, __LAPACK_double_complex * B,
                  const __LAPACK_int LDB);
-
-}
-
