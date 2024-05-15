@@ -7,7 +7,7 @@
 //                 const __LAPACK_int INCX, float *  Y, const __LAPACK_int INCY);
 //EOT;
 //$code = file_get_contents(__DIR__.'/src/cblas_new_macos.h');
-$code = file_get_contents(__DIR__.'/src/openblas.h');
+//$code = file_get_contents(__DIR__.'/src/openblas.h');
 
 
 //$filename = '/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib';
