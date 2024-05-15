@@ -3,9 +3,12 @@
 $code = <<<EOT
 typedef int32_t                     __LAPACK_int;
 
-void cblas_saxpy(const __LAPACK_int N, const float ALPHA, const float * X,
-                 const __LAPACK_int INCX, float *  Y, const __LAPACK_int INCY);
+void cblas_saxpy(const __LAPACK_int N, const float ALPHA, const float * _Nullable X,
+                 const __LAPACK_int INCX, float * _Nullable Y, const __LAPACK_int INCY)
 EOT;
+//void cblas_saxpy(const __LAPACK_int N, const float ALPHA, const float * X,
+//                 const __LAPACK_int INCX, float *  Y, const __LAPACK_int INCY);
+
 
 $filename = '/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib';
 //$filename = 'libopenblas.dll';
