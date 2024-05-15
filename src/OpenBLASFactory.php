@@ -12,6 +12,7 @@ class OpenBLASFactory
 {
     private static ?FFI $ffi = null;
     private static ?FFI $ffiLapacke = null;
+    private static ?FFI $ffiLapack = null;
     /** @var array<string> $libs_win */
     protected array $libs_win = ['libopenblas.dll'];
     /** @var array<string> $libs_linux */
@@ -24,7 +25,7 @@ class OpenBLASFactory
     /** @var array<string> $lapacke_linux */
     protected array $lapacke_linux = ['liblapacke.so.3'];
     /** @var array<string> $lapacke_mac */
-    protected array $lapacke_mac = ['dummy-libopenblas.0.dylib'];
+    protected array $lapack_mac = ['/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib'];
 
     /**
      * @param array<string> $libFiles
@@ -46,7 +47,11 @@ class OpenBLASFactory
         //
         // blas
         //
-        $headerFile = $headerFile ?? __DIR__.'/openblas.h';
+        if(PHP_OS=='Darwin') {
+            $headerFile = $headerFile ?? __DIR__.'/cblas_new_vecLib.h';
+        } else {
+            $headerFile = $headerFile ?? __DIR__.'/openblas.h';
+        }
         if($libFiles==null) {
             if(PHP_OS=='Linux') {
                 $libFiles = $this->libs_linux;
@@ -119,6 +124,48 @@ class OpenBLASFactory
             self::$ffiLapacke = $ffiLapacke;
             break;
         }
+
+        //
+        // lapack
+        //
+        $lapackHeader = $lapackHeader ?? __DIR__ . '/lapack.h';
+        if($lapackeLibs==null) {
+            if(PHP_OS=='Linux') {
+                $lapackeLibs = $this->lapacke_linux;
+            } elseif(PHP_OS=='Darwin') {
+                $lapackeLibs = $this->lapacke_mac;
+            } elseif(PHP_OS=='WINNT') {
+                $lapackeLibs = $this->lapacke_win;
+            } else {
+                throw new RuntimeException('Unknown operating system: "'.PHP_OS.'"');
+            }
+        }
+        $code = file_get_contents($lapackHeader);
+        // ***************************************************************
+        // FFI Locator is incompletely implemented. It is often not found.
+        // ***************************************************************
+        //if(PHP_OS=='Linux') {
+        //    $libFiles = $this->lapackeLibs;
+        //    $pathname = FFIEnvLocator::resolve(...$libFiles);
+        //}
+        //if($pathname) {
+        //    $code = file_get_contents($headerFile);
+        //    $ffi = FFI::cdef($code,$pathname);
+        //    self::$ffiLapacke = $ffi;
+        //}
+        foreach ($lapackeLibs as $filename) {
+            $ffiLapack = null;
+            try {
+                $ffiLapack = FFI::cdef($code,$filename);
+            } catch(FFIException $e) {
+                echo $e->getMessage()."\n";
+                continue;
+            }
+            self::$ffiLapack = $ffiLapack;
+            break;
+        }
+
+
     }
 
     public function isAvailable() : bool
@@ -146,5 +193,13 @@ class OpenBLASFactory
             throw new RuntimeException('lapacke library not loaded.');
         }
         return new Lapack(self::$ffiLapacke);
+    }
+
+    public function Lapackb() : Lapackb
+    {
+        if(self::$ffiLapack==null) {
+            throw new RuntimeException('lapacke library not loaded.');
+        }
+        return new Lapackb(self::$ffiLapack);
     }
 }
