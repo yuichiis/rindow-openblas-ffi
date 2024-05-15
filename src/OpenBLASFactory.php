@@ -17,7 +17,8 @@ class OpenBLASFactory
     /** @var array<string> $libs_linux */
     protected array $libs_linux = ['libopenblas.so.0'];
     /** @var array<string> $libs_mac */
-    protected array $libs_mac = ['libopenblas.0.dylib'];
+    //protected array $libs_mac = ['libopenblas.0.dylib'];
+    protected array $libs_mac = ['/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib'];
     /** @var array<string> $lapacke_win */
     protected array $lapacke_win = ['libopenblas.dll'];
     /** @var array<string> $lapacke_linux */
