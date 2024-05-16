@@ -33,13 +33,14 @@ class LapackTest extends TestCase
         return $lapack;
     }
 
-    public function translate_gesvd(NDArray $matrix,$fullMatrices=null)
+    public function translate_gesvd(NDArray $matrix,bool $fullMatrices=null)
     {
         if($matrix->ndim()!=2) {
             throw new InvalidArgumentException("input array must be 2D array");
         }
-        if($fullMatrices===null)
+        if($fullMatrices===null) {
             $fullMatrices = true;
+        }
         [$m,$n] = $matrix->shape();
         if($fullMatrices) {
             $jobu  = 'A';

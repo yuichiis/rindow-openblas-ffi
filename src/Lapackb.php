@@ -224,8 +224,9 @@ class Lapackb
             throw new RuntimeException( "Wrong parameter. error=$info", $info);
         }
 
-        for($i=0; $i<min($m,$n)-1; $i++ ) {
-            $superb[$i] = $work[$i+1];
+        $len = count($SuperB);
+        for($i=0; $i<$len; $i++ ) {
+            $SuperB[$i] = $work[$i+1];
         }
         if($matrix_layout==self::LAPACK_ROW_MAJOR) {
             for($i=0;$i<$m;$i++) {
