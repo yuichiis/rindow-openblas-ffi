@@ -181,8 +181,6 @@ class Lapackb
         $info_p[0] = 0;
         $lwork = (int)$wkopt_p[0];
         $lwork_p[0]= $lwork;
-        echo "info=$info\n";
-        echo "lwork=$lwork\n";
 
         switch ($dtype) {
             case NDArray::float32:
@@ -217,7 +215,6 @@ class Lapackb
                 throw new RuntimeException("Unsupported data type.", 0);
         }
         $info = $info_p[0];
-        echo "info=$info\n";
 
         if( $info == self::LAPACK_WORK_MEMORY_ERROR ) {
             throw new RuntimeException( "Not enough memory to allocate work array.", $info);

@@ -19,13 +19,6 @@ class BlasTest extends TestCase
 {
     use Utils;
 
-    public function getBlas()
-    {
-        $factory = new OpenBLASFactory();
-        $blas = $factory->Blas();
-        return $blas;
-    }
-
     public function getOpenBLASVersion($blas)
     {
         $config = $blas->getConfig();
@@ -47,38 +40,6 @@ class BlasTest extends TestCase
         return true;
     }
 
-    public function translate_scal(
-        float|object $a,NDArray $X) : array
-    {
-        $N = $X->size();
-        $XX = $X->buffer();
-        $offX = $X->offset();
-        return [$N,$a,$XX,$offX,1];
-    }
-
-    public function translate_axpy(
-        NDArray $X,NDArray $Y, float|object $alpha=null) : array
-    {
-        if($X->shape()!=$Y->shape()) {
-            $shapeError = '('.implode(',',$X->shape()).'),('.implode(',',$Y->shape()).')';
-            throw new InvalidArgumentException("Unmatch shape of dimension: ".$shapeError);
-        }
-        if($alpha===null) {
-            if($this->isComplex($X->dtype())) {
-                $alpha = C(1.0);
-            } else {
-                $alpha = 1.0;
-            }
-        }
-        $N = $X->size();
-        $XX = $X->buffer();
-        $offX = $X->offset();
-        $N = $X->size();
-        $YY = $Y->buffer();
-        $offY = $Y->offset();
-        return [$N,$alpha,$XX,$offX,1,$YY,$offY,1];
-    }
-
     public function translate_dot(
         NDArray $X,NDArray $Y) : array
     {
@@ -90,31 +51,6 @@ class BlasTest extends TestCase
         $XX = $X->buffer();
         $offX = $X->offset();
         $N = $X->size();
-        $YY = $Y->buffer();
-        $offY = $Y->offset();
-        return [$N,$XX,$offX,1,$YY,$offY,1];
-    }
-
-    public function translate_amin(
-        NDArray $X) : array
-    {
-        $N = $X->size();
-        $XX = $X->buffer();
-        $offX = $X->offset();
-        return [$N,$XX,$offX,1];
-    }
-
-    public function translate_copy(
-        NDArray $X,
-        NDArray $Y ) : array
-    {
-        if($X->shape()!=$Y->shape()) {
-            $shapeError = '('.implode(',',$X->shape()).'),('.implode(',',$Y->shape()).')';
-            throw new InvalidArgumentException("Unmatch shape of dimension: ".$shapeError);
-        }
-        $N = $X->size();
-        $XX = $X->buffer();
-        $offX = $X->offset();
         $YY = $Y->buffer();
         $offY = $Y->offset();
         return [$N,$XX,$offX,1,$YY,$offY,1];

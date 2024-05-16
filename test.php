@@ -103,3 +103,6 @@ $lapack->gesvd(
     $VVT, $offsetVT, $ldVT,
     $SuperBB,  $offsetSuperB
 );
+echo "S=".$mo->toString($S,'%6.2f',indent:true)."\n";
+echo "U=".$mo->toString($U,'%6.2f',indent:true)."\n";
+echo "VT=".$mo->toString($VT,'%6.2f',indent:true)."\n";

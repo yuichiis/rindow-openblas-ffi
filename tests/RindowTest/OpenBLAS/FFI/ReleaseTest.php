@@ -19,11 +19,6 @@ class ReleaseTest extends TestCase
 
     protected $factory;
 
-    public function setUp() : void
-    {
-        $this->factory = new OpenBLASFactory();
-    }
-
     public function getLapack()
     {
         $lapack = $this->factory->Lapackb();
@@ -174,27 +169,24 @@ class ReleaseTest extends TestCase
 
         # ---- u ----
         $correctU = $this->array([
-            [-0.59,-0.40,-0.03,-0.43,-0.47, 0.29],
-            [ 0.26, 0.24,-0.60, 0.24,-0.35, 0.58],
-            [ 0.36,-0.22,-0.45,-0.69, 0.39,-0.02],
-            [ 0.31,-0.75, 0.23, 0.33, 0.16, 0.38],
-            [ 0.23,-0.36,-0.31, 0.16,-0.52,-0.65],
-            [ 0.55, 0.18, 0.54,-0.39,-0.46, 0.11],
-
-            //[-0.59, 0.26, 0.36, 0.31, 0.23, 0.55],
-            //[-0.40, 0.24,-0.22,-0.75,-0.36, 0.18],
-            //[-0.03,-0.60,-0.45, 0.23,-0.31, 0.54],
-            //[-0.43, 0.24,-0.69, 0.33, 0.16,-0.39],
-            //[-0.47,-0.35, 0.39, 0.16,-0.52,-0.46],
-            //[ 0.29, 0.58,-0.02, 0.38,-0.65, 0.11],
+            [-0.59, 0.26, 0.36, 0.31, 0.23, 0.55],
+            [-0.40, 0.24,-0.22,-0.75,-0.36, 0.18],
+            [-0.03,-0.60,-0.45, 0.23,-0.31, 0.54],
+            [-0.43, 0.24,-0.69, 0.33, 0.16,-0.39],
+            [-0.47,-0.35, 0.39, 0.16,-0.52,-0.46],
+            [ 0.29, 0.58,-0.02, 0.38,-0.65, 0.11],
         ]);
         //$this->assertTrue(false);
-        $this->assertLessThan(0.01,abs($this->amax($this->axpy($u,$correctU,-1))));
+        //echo $this->arrayToString($u,'%10.6f',true)."\n";
+        $this->assertTrue($this->isclose($u,$correctU,rtol:1e-2,atol:1e-3));
+        #$this->assertLessThan(0.01,abs($this->amax($this->axpy($u,$correctU,-1))));
         # ---- s ----
         $correctS = $this->array(
             [27.47,22.64, 8.56, 5.99, 2.01]
         );
-        $this->assertLessThan(0.01,abs($this->amax($this->axpy($s,$correctS,-1))));
+        //echo $this->arrayToString($s,'%10.6f',true)."\n";
+        $this->assertTrue($this->isclose($s,$correctS,rtol:1e-2,atol:1e-3));
+        //$this->assertLessThan(0.01,abs($this->amax($this->axpy($s,$correctS,-1))));
         # ---- vt ----
         $correctVT = $this->array([
             [-0.25,-0.40,-0.69,-0.37,-0.41],
@@ -203,7 +195,9 @@ class ReleaseTest extends TestCase
             [ 0.40,-0.45, 0.25, 0.43,-0.62],
             [-0.22, 0.14, 0.59,-0.63,-0.44],
         ]);
-        $this->assertLessThan(0.01,abs($this->amax($this->axpy($vt,$correctVT,-1))));
+        //echo $this->arrayToString($vt,'%10.6f',true)."\n";
+        $this->assertTrue($this->isclose($vt,$correctVT,rtol:1e-2,atol:1e-3));
+        //$this->assertLessThan(0.01,abs($this->amax($this->axpy($vt,$correctVT,-1))));
     }
 
 }

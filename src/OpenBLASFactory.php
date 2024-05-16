@@ -13,19 +13,52 @@ class OpenBLASFactory
     private static ?FFI $ffi = null;
     private static ?FFI $ffiLapacke = null;
     private static ?FFI $ffiLapack = null;
-    /** @var array<string> $libs_win */
-    protected array $libs_win = ['libopenblas.dll'];
-    /** @var array<string> $libs_linux */
-    protected array $libs_linux = ['libopenblas.so.0'];
-    /** @var array<string> $libs_mac */
-    //protected array $libs_mac = ['libopenblas.0.dylib'];
-    protected array $libs_mac = ['/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib'];
-    /** @var array<string> $lapacke_win */
-    protected array $lapacke_win = ['libopenblas.dll'];
-    /** @var array<string> $lapacke_linux */
-    protected array $lapacke_linux = ['liblapacke.so.3'];
-    /** @var array<string> $lapacke_mac */
-    protected array $lapack_mac = ['/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib'];
+    protected array $configMatrix = [
+        'WINNT' => [
+            'blas' => [
+                'header' => __DIR__.'/openblas.h',
+                'libs' => ['libopenblas.dll'],
+            ],
+            'lapacke' => [
+                'header' => __DIR__ . '/lapacke.h',
+                'libs' => ['libopenblas.dll'],
+            ],
+            'lapack' => [
+                'header' => __DIR__ . '/lapack.h',
+                'libs' => ['libopenblas.dll'],
+            ],
+        ],
+        'Linux' => [
+            'blas' => [
+                'header' => __DIR__.'/openblas.h',
+                'libs' => ['libopenblas.so.0'],
+            ],
+            'lapacke' => [
+                'header' => __DIR__ . '/lapacke.h',
+                'libs' => ['liblapacke.so.3'],
+            ],
+            'lapack' => [
+                'header' => __DIR__ . '/lapack.h',
+                'libs' => ['libopenblas.so.0'],
+            ],
+        ],
+        'Darwin' => [
+            'blas' => [
+                'header' => __DIR__.'/cblas_new_vecLib.h',
+                'libs' => ['/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib'],
+            ],
+            'lapacke' => [
+                'header' => null,
+                'libs' => null,
+            ],
+            'lapack' => [
+                'header' => __DIR__ . '/clapack_vecLib.h',
+                'libs' => ['/System/Library/Frameworks/Accelerate.framework/Versions/Current/Frameworks/vecLib.framework/vecLib'],
+            ],
+        ],
+    ];
+    /** @var array<string> $errors */
+    private array $errors = [];
 
     /**
      * @param array<string> $libFiles
@@ -44,6 +77,30 @@ class OpenBLASFactory
         if(!extension_loaded('ffi')) {
             return;
         }
+
+        $config = $this->generateConfig([
+            'blas' => [
+                'header' => $headerFile,
+                'libs' => $libFiles,
+            ],
+            'lapacke' => [
+                'header' => $lapackeHeader,
+                'libs' => $lapackeLibs,
+            ],
+            'lapack' => [],
+        ]);
+        $drivers = $this->loadLibraries($config);
+        if(isset($drivers['blas'])) {
+            self::$ffi = $drivers['blas'];
+        }
+        if(isset($drivers['lapacke'])) {
+            self::$ffiLapacke = $drivers['lapacke'];
+        }
+        if(isset($drivers['lapack'])) {
+            self::$ffiLapack = $drivers['lapack'];
+        }
+        return;
+    
         //
         // blas
         //
@@ -166,6 +223,45 @@ class OpenBLASFactory
         }
 
 
+    }
+
+    protected function generateConfig(array $params) : array
+    {
+        $os = PHP_OS;
+        if(!isset($this->configMatrix[$os])) {
+            throw new RuntimeException('Unknown operating system: "'.PHP_OS.'"');
+        }
+        $defaults = $this->configMatrix[$os];
+        foreach($defaults as $type => $names) {
+            foreach($names as $key => $value) {
+                $params[$type][$key] ??= $value;
+            }
+        }
+        return $params;
+    }
+
+    protected function loadLibraries(array $params) : array
+    {
+        /** @var array<objects> $ffis */
+        $ffis = [];
+        foreach($params as $key => $param) {
+            $code = file_get_contents($param['header']);
+            if($code===false) {
+                throw new RuntimeException('The header file not found: "'.$name['header'].'"');
+            }
+            foreach($param['libs'] as $filename) {
+                $ffi = null;
+                try {
+                    $ffi = FFI::cdef($code,$filename);
+                } catch(FFIException $e) {
+                    $this->errors[] = $e->getMessage();
+                    continue;
+                }
+                $ffis[$key] = $ffi;
+                break;
+            }
+        }
+        return $ffis;
     }
 
     public function isAvailable() : bool
