@@ -39,7 +39,7 @@ class OpenBLASFactory
             ],
             'lapack' => [
                 'header' => __DIR__ . '/lapack.h',
-                'libs' => ['libopenblas.so.0'],
+                'libs' => ['liblapack.so.3'],
             ],
         ],
         'Darwin' => [
