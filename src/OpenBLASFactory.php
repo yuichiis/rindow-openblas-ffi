@@ -18,7 +18,7 @@ class OpenBLASFactory
             'blas' => [
                 'header' => __DIR__.'/openblas.h',
                 'libs' => ['libopenblas.dll'],
-            ],
+            ],  
             'lapacke' => [
                 'header' => __DIR__ . '/lapacke.h',
                 'libs' => ['libopenblas.dll'],
@@ -99,130 +99,6 @@ class OpenBLASFactory
         if(isset($drivers['lapack'])) {
             self::$ffiLapack = $drivers['lapack'];
         }
-        return;
-    
-        //
-        // blas
-        //
-        if(PHP_OS=='Darwin') {
-            $headerFile = $headerFile ?? __DIR__.'/cblas_new_vecLib.h';
-        } else {
-            $headerFile = $headerFile ?? __DIR__.'/openblas.h';
-        }
-        if($libFiles==null) {
-            if(PHP_OS=='Linux') {
-                $libFiles = $this->libs_linux;
-            } elseif(PHP_OS=='Darwin') {
-                $libFiles = $this->libs_mac;
-            } elseif(PHP_OS=='WINNT') {
-                $libFiles = $this->libs_win;
-            } else {
-                throw new RuntimeException('Unknown operating system: "'.PHP_OS.'"');
-            }
-        }
-        $code = file_get_contents($headerFile);
-        // ***************************************************************
-        // FFI Locator is incompletely implemented. It is often not found.
-        // ***************************************************************
-        //$pathname = FFIEnvLocator::resolve(...$libFiles);
-        //if($pathname) {
-        //    $ffi = FFI::cdef($code,$pathname);
-        //    self::$ffi = $ffi;
-        //}
-        foreach ($libFiles as $filename) {
-            $ffi = null;
-            try {
-                $ffi = FFI::cdef($code,$filename);
-            } catch(FFIException $e) {
-                echo "==== BLAS filename: ".$filename." ====\n";
-                echo $e->getMessage()."\n";
-                continue;
-            }
-            self::$ffi = $ffi;
-            break;
-        }
-        //
-        // lapacke
-        //
-        $lapackeHeader = $lapackeHeader ?? __DIR__ . '/lapacke.h';
-        if($lapackeLibs==null) {
-            if(PHP_OS=='Linux') {
-                $lapackeLibs = $this->lapacke_linux;
-            } elseif(PHP_OS=='Darwin') {
-                $lapackeLibs = $this->lapacke_mac;
-            } elseif(PHP_OS=='WINNT') {
-                $lapackeLibs = $this->lapacke_win;
-            } else {
-                throw new RuntimeException('Unknown operating system: "'.PHP_OS.'"');
-            }
-        }
-        $code = file_get_contents($lapackeHeader);
-        // ***************************************************************
-        // FFI Locator is incompletely implemented. It is often not found.
-        // ***************************************************************
-        //if(PHP_OS=='Linux') {
-        //    $libFiles = $this->lapackeLibs;
-        //    $pathname = FFIEnvLocator::resolve(...$libFiles);
-        //}
-        //if($pathname) {
-        //    $code = file_get_contents($headerFile);
-        //    $ffi = FFI::cdef($code,$pathname);
-        //    self::$ffiLapacke = $ffi;
-        //}
-        foreach ($lapackeLibs as $filename) {
-            $ffiLapacke = null;
-            try {
-                $ffiLapacke = FFI::cdef($code,$filename);
-            } catch(FFIException $e) {
-                echo "==== LAPACKE filename: ".$filename." ====\n";
-                echo $e->getMessage()."\n";
-                continue;
-            }
-            self::$ffiLapacke = $ffiLapacke;
-            break;
-        }
-
-        //
-        // lapack
-        //
-        $lapackHeader = $lapackHeader ?? __DIR__ . '/lapack.h';
-        if($lapackeLibs==null) {
-            if(PHP_OS=='Linux') {
-                $lapackeLibs = $this->lapacke_linux;
-            } elseif(PHP_OS=='Darwin') {
-                $lapackeLibs = $this->lapacke_mac;
-            } elseif(PHP_OS=='WINNT') {
-                $lapackeLibs = $this->lapacke_win;
-            } else {
-                throw new RuntimeException('Unknown operating system: "'.PHP_OS.'"');
-            }
-        }
-        $code = file_get_contents($lapackHeader);
-        // ***************************************************************
-        // FFI Locator is incompletely implemented. It is often not found.
-        // ***************************************************************
-        //if(PHP_OS=='Linux') {
-        //    $libFiles = $this->lapackeLibs;
-        //    $pathname = FFIEnvLocator::resolve(...$libFiles);
-        //}
-        //if($pathname) {
-        //    $code = file_get_contents($headerFile);
-        //    $ffi = FFI::cdef($code,$pathname);
-        //    self::$ffiLapacke = $ffi;
-        //}
-        foreach ($lapackeLibs as $filename) {
-            $ffiLapack = null;
-            try {
-                $ffiLapack = FFI::cdef($code,$filename);
-            } catch(FFIException $e) {
-                echo $e->getMessage()."\n";
-                continue;
-            }
-            self::$ffiLapack = $ffiLapack;
-            break;
-        }
-
-
     }
 
     protected function generateConfig(array $params) : array
