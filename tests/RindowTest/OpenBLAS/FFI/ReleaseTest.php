@@ -177,7 +177,7 @@ class ReleaseTest extends TestCase
             [ 0.29, 0.58,-0.02, 0.38,-0.65, 0.11],
         ]);
         //$this->assertTrue(false);
-        //echo $this->arrayToString($u,'%10.6f',true)."\n";
+        echo $this->arrayToString($u,'%10.6f',true)."\n";
         $this->assertTrue($this->isclose($u,$correctU,rtol:1e-2,atol:1e-3));
         #$this->assertLessThan(0.01,abs($this->amax($this->axpy($u,$correctU,-1))));
         # ---- s ----
