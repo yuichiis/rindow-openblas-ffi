@@ -121,19 +121,19 @@ class Lapackb
         /** @var ffi_char_t2 $jobvt_p */
         $jobvt_p = $ffi->new('char[4]');
         $jobvt_p[0] = chr($jobvt);
-        $m_p = $ffi->new('lapack_int[2]');
+        $m_p = $ffi->new('lapack_int[1]');
         $m_p[0] = $m;
-        $n_p = $ffi->new('lapack_int[2]');
+        $n_p = $ffi->new('lapack_int[1]');
         $n_p[0] = $n;
-        $ldA_p = $ffi->new('lapack_int[2]');
+        $ldA_p = $ffi->new('lapack_int[1]');
         $ldA_p[0] = $ldA;
-        $ldU_p = $ffi->new('lapack_int[2]');
+        $ldU_p = $ffi->new('lapack_int[1]');
         $ldU_p[0] = $ldU;
-        $ldVT_p = $ffi->new('lapack_int[2]');
+        $ldVT_p = $ffi->new('lapack_int[1]');
         $ldVT_p[0] = $ldVT;
-        $lwork_p = $ffi->new("lapack_int[2]");
+        $lwork_p = $ffi->new("lapack_int[1]");
         $lwork_p[0] = -1;
-        $info_p = $ffi->new("lapack_int[2]");
+        $info_p = $ffi->new("lapack_int[1]");
         $info_p[0] = 0;
 
         //var_dump($ffi::sizeof($m_p)*8);

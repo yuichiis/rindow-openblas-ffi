@@ -99,8 +99,24 @@ class ReleaseTest extends TestCase
         //return [$U,$S,$VT];
     }
 
-    public function testSvdFull1()
+    public static function providerDtypesFloats()
     {
+        return [
+            'float32' => [[
+                'dtype' => NDArray::float32,
+            ]],
+            'float64' => [[
+                'dtype' => NDArray::float64,
+            ]],
+        ];
+    }
+
+    /**
+    * @dataProvider providerDtypesFloats
+    */
+    public function testSvdFull1($params)
+    {
+        extract($params);
         $lapack = $this->getLapack();
         $a = $this->array([
             //[8.79,  6.11, -9.15,  9.57, -3.49,  9.84],
@@ -116,7 +132,7 @@ class ReleaseTest extends TestCase
             [ 9.57,  1.64,  8.83,  0.74,  5.80,],
             [-3.49,  4.02,  9.80, 10.00,  4.27,],
             [ 9.84,  0.15, -8.99, -6.02, -5.31,],
-        ]);
+        ],dtype:$dtype);
         $fullMatrices = null;
         $this->assertEquals([6,5],$a->shape());
         [
@@ -175,7 +191,7 @@ class ReleaseTest extends TestCase
             [-0.43, 0.24,-0.69, 0.33, 0.16,-0.39],
             [-0.47,-0.35, 0.39, 0.16,-0.52,-0.46],
             [ 0.29, 0.58,-0.02, 0.38,-0.65, 0.11],
-        ]);
+        ],dtype:$dtype);
         //$this->assertTrue(false);
         echo $this->arrayToString($u,'%10.6f',true)."\n";
         //$this->assertTrue($this->isclose($u,$correctU,rtol:1e-2,atol:1e-3));
@@ -183,7 +199,7 @@ class ReleaseTest extends TestCase
         # ---- s ----
         $correctS = $this->array(
             [27.47,22.64, 8.56, 5.99, 2.01]
-        );
+            ,dtype:$dtype);
         echo $this->arrayToString($s,'%10.6f',true)."\n";
         //$this->assertTrue($this->isclose($s,$correctS,rtol:1e-2,atol:1e-3));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($s,$correctS,-1))));
@@ -194,7 +210,7 @@ class ReleaseTest extends TestCase
             [-0.26, 0.70,-0.22, 0.39,-0.49],
             [ 0.40,-0.45, 0.25, 0.43,-0.62],
             [-0.22, 0.14, 0.59,-0.63,-0.44],
-        ]);
+        ],dtype:$dtype);
         echo $this->arrayToString($vt,'%10.6f',true)."\n";
         //$this->assertTrue($this->isclose($vt,$correctVT,rtol:1e-2,atol:1e-3));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($vt,$correctVT,-1))));
