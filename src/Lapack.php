@@ -27,6 +27,11 @@ class Lapack
         $this->ffi = $ffi;
     }
 
+    public function setMo($mo)
+    {
+        $this->mo = $mo;
+    }
+
     public function ffi() : object
     {
         return $this->ffi;

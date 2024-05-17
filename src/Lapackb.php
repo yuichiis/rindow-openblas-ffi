@@ -23,10 +23,16 @@ class Lapackb
     const LAPACK_COL_MAJOR = 102;
 
     protected FFI $ffi;
+    protected $mo;
 
     public function __construct(FFI $ffi)
     {
         $this->ffi = $ffi;
+    }
+
+    public function setMo($mo)
+    {
+        $this->mo = $mo;
     }
 
     public function ffi() : object
@@ -118,6 +124,16 @@ class Lapackb
         } else {
             throw new InvalidArgumentException("Invalid matrix_layout: $matrix_layout");
         }
+        echo "------ targetA -----\n";
+        echo "[\n";
+        for($i=0;$i<$m;$i++) {
+            echo "[";
+            for($j=0;$j<$n;$j++) {
+                echo sprintf('%10.6f',$targetA[$i+$j*$m]).",";
+            }
+            echo "]\n";
+        }
+        echo "]\n";
 
 
         /** @var ffi_char_t2 $jobu_p */

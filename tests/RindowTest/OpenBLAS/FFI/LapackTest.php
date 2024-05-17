@@ -112,6 +112,7 @@ class LapackTest extends TestCase
     {
         extract($params);
         $lapack = $this->getLapack();
+        $lapack->setMo($this);
         $a = $this->array([
             [ 8.79,  9.93,  9.83,  5.45,  3.16,],
             [ 6.11,  6.91,  5.04, -0.27,  7.98,],
