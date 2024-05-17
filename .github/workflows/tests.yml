@@ -82,7 +82,7 @@ jobs:
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
-          run: phpunit -c tests
+          php test.php
 
         #  phpunit -c tests --filter ReleaseTest
         #  brew install openblas
