@@ -18,9 +18,12 @@ typedef int32_t                     lapack_int;
 //#define xdouble double
 typedef double xdouble;
 //#define OPENBLAS_COMPLEX_STRUCT
-typedef struct _openblas_complex_float { float real, imag; } openblas_complex_float;
-typedef struct _openblas_complex_double { double real, imag; } openblas_complex_double;
-typedef struct _openblas_complex_xdouble { xdouble real, imag; } openblas_complex_xdouble;
+struct _openblas_complex_float { float real, imag; };
+struct _openblas_complex_double { double real, imag; };
+struct _openblas_complex_xdouble { xdouble real, imag; };
+typedef struct _openblas_complex_float openblas_complex_float;
+typedef struct _openblas_complex_double openblas_complex_double;
+typedef struct _openblas_complex_xdouble openblas_complex_xdouble;
 //#define openblas_make_complex_float(real, imag)    {(real), (imag)}
 //#define openblas_make_complex_double(real, imag)   {(real), (imag)}
 //#define openblas_make_complex_xdouble(real, imag)  {(real), (imag)}
