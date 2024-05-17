@@ -1,10 +1,8 @@
 typedef int32_t                     __LAPACK_int;
-struct _rindow_complex_float { float real, imag; };
-struct _rindow_complex_double { double real, imag; };
-typedef struct _rindow_complex_float __LAPACK_float_complex;
-typedef struct _rindow_complex_double __LAPACK_double_complex;
-typedef struct _rindow_complex_float rindow_complex_float;
-typedef struct _rindow_complex_double rindow_complex_double;
+struct _openblas_complex_float { float real, imag; };
+struct _openblas_complex_double { double real, imag; };
+typedef struct _openblas_complex_float openblas_complex_float;
+typedef struct _openblas_complex_double openblas_complex_double;
 
 enum CBLAS_ORDER {CblasRowMajor=101, CblasColMajor=102 };
 enum CBLAS_TRANSPOSE {CblasNoTrans=111, CblasTrans=112, CblasConjTrans=113, AtlasConj=114};
@@ -80,14 +78,14 @@ void SetBLASParamErrorProc(BLASParamErrorProc __ErrorProc);
 // MARK: AMAX
 __LAPACK_int cblas_isamax(const __LAPACK_int N, const float * X, const __LAPACK_int INCX);
 __LAPACK_int cblas_idamax(const __LAPACK_int N, const double * X, const __LAPACK_int INCX);
-__LAPACK_int cblas_icamax(const __LAPACK_int N, const __LAPACK_float_complex * X, const __LAPACK_int INCX);
-__LAPACK_int cblas_izamax(const __LAPACK_int N, const __LAPACK_double_complex * X, const __LAPACK_int INCX);
+__LAPACK_int cblas_icamax(const __LAPACK_int N, void * X, const __LAPACK_int INCX);
+__LAPACK_int cblas_izamax(const __LAPACK_int N, void * X, const __LAPACK_int INCX);
 
 // MARK: ASUM
 float cblas_sasum(const __LAPACK_int N, const float * X, const __LAPACK_int INCX);
 double cblas_dasum(const __LAPACK_int N, const double * X, const __LAPACK_int INCX);
-float  cblas_scasum(const __LAPACK_int N, const __LAPACK_float_complex * X, const __LAPACK_int INCX);
-double cblas_dzasum(const __LAPACK_int N, const __LAPACK_double_complex * X, const __LAPACK_int INCX);
+float  cblas_scasum(const __LAPACK_int N, void * X, const __LAPACK_int INCX);
+double cblas_dzasum(const __LAPACK_int N, void * X, const __LAPACK_int INCX);
 
 
 // MARK: AXPY
@@ -95,10 +93,10 @@ void cblas_saxpy(const __LAPACK_int N, const float ALPHA, const float * X,
                  const __LAPACK_int INCX, float * Y, const __LAPACK_int INCY);
 void cblas_daxpy(const __LAPACK_int N, const double ALPHA, const double * X,
                  const __LAPACK_int INCX, double * Y, const __LAPACK_int INCY);
-void cblas_caxpy(const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * X,
-                 const __LAPACK_int INCX, __LAPACK_float_complex * Y, const __LAPACK_int INCY);
-void cblas_zaxpy(const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * X,
-                 const __LAPACK_int INCX, __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+void cblas_caxpy(const __LAPACK_int N, void * ALPHA, void * X,
+                 const __LAPACK_int INCX, void * Y, const __LAPACK_int INCY);
+void cblas_zaxpy(const __LAPACK_int N, void * ALPHA, void * X,
+                 const __LAPACK_int INCX, void * Y, const __LAPACK_int INCY);
 
 
 // MARK: AXPBY
@@ -106,20 +104,20 @@ void catlas_saxpby(const __LAPACK_int N, const float ALPHA, const float * X,
                    const __LAPACK_int INCX, const float BETA, float * Y, const __LAPACK_int INCY);
 void catlas_daxpby(const __LAPACK_int N, const double ALPHA, const double * X,
                    const __LAPACK_int INCX, const double BETA, double * Y, const __LAPACK_int INCY);
-void catlas_caxpby(const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * X,
-                   const __LAPACK_int INCX, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * Y, const __LAPACK_int INCY);
-void catlas_zaxpby(const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * X,
-                   const __LAPACK_int INCX, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+void catlas_caxpby(const __LAPACK_int N, void * ALPHA, void * X,
+                   const __LAPACK_int INCX, void * BETA, void * Y, const __LAPACK_int INCY);
+void catlas_zaxpby(const __LAPACK_int N, void * ALPHA, void * X,
+                   const __LAPACK_int INCX, void * BETA, void * Y, const __LAPACK_int INCY);
 
 // MARK: COPY
 void cblas_scopy(const __LAPACK_int N, const float * X, const __LAPACK_int INCX,
                  float * Y, const __LAPACK_int INCY);
 void cblas_dcopy(const __LAPACK_int N, const double * X, const __LAPACK_int INCX,
                  double * Y, const __LAPACK_int INCY);
-void cblas_ccopy(const __LAPACK_int N, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                 __LAPACK_float_complex * Y, const __LAPACK_int INCY);
-void cblas_zcopy(const __LAPACK_int N, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                 __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+void cblas_ccopy(const __LAPACK_int N, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY);
+void cblas_zcopy(const __LAPACK_int N, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY);
 
 // MARK: DOT
 float cblas_sdot(const __LAPACK_int N, const float * X, const __LAPACK_int INCX,
@@ -128,16 +126,16 @@ double cblas_ddot(const __LAPACK_int N, const double * X, const __LAPACK_int INC
                   const double * Y, const __LAPACK_int INCY);
 
 // MARK: DOTU
-void cblas_cdotu_sub(const __LAPACK_int N, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                     const __LAPACK_float_complex * Y, const __LAPACK_int INCY, __LAPACK_float_complex * DOTU);
-void cblas_zdotu_sub(const __LAPACK_int N, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                     const __LAPACK_double_complex * Y, const __LAPACK_int INCY, __LAPACK_double_complex * DOTU);
+void cblas_cdotu_sub(const __LAPACK_int N, void * X, const __LAPACK_int INCX,
+                     void * Y, const __LAPACK_int INCY, void * DOTU);
+void cblas_zdotu_sub(const __LAPACK_int N, void * X, const __LAPACK_int INCX,
+                     void * Y, const __LAPACK_int INCY, void * DOTU);
 
 // MARK: DOTC
-void cblas_cdotc_sub(const __LAPACK_int N, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                     const __LAPACK_float_complex * Y, const __LAPACK_int INCY, __LAPACK_float_complex * DOTC);
-void cblas_zdotc_sub(const __LAPACK_int N, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                     const __LAPACK_double_complex * Y, const __LAPACK_int INCY, __LAPACK_double_complex * DOTC);
+void cblas_cdotc_sub(const __LAPACK_int N, void * X, const __LAPACK_int INCX,
+                     void * Y, const __LAPACK_int INCY, void * DOTC);
+void cblas_zdotc_sub(const __LAPACK_int N, void * X, const __LAPACK_int INCX,
+                     void * Y, const __LAPACK_int INCY, void * DOTC);
 
 // MARK: DSDOT
 float cblas_sdsdot(const __LAPACK_int N, const float ALPHA, const float * X,
@@ -149,24 +147,24 @@ double cblas_dsdot(const __LAPACK_int N, const float * X, const __LAPACK_int INC
 // MARK: NRM2
 float cblas_snrm2(const __LAPACK_int N, const float * X, const __LAPACK_int INCX);
 double cblas_dnrm2(const __LAPACK_int N, const double * X, const __LAPACK_int INCX);
-float  cblas_scnrm2(const __LAPACK_int N, const __LAPACK_float_complex * X, const __LAPACK_int INCX);
-double cblas_dznrm2(const __LAPACK_int N, const __LAPACK_double_complex * X, const __LAPACK_int INCX);
+float  cblas_scnrm2(const __LAPACK_int N, void * X, const __LAPACK_int INCX);
+double cblas_dznrm2(const __LAPACK_int N, void * X, const __LAPACK_int INCX);
 
 // MARK: ROT
 void cblas_srot(const __LAPACK_int N, float * X, const __LAPACK_int INCX, float * Y,
                 const __LAPACK_int INCY, const float C, const float S);
 void cblas_drot(const __LAPACK_int N, double * X, const __LAPACK_int INCX, double * Y,
                 const __LAPACK_int INCY, const double C, const double S);
-void cblas_csrot(const __LAPACK_int N, __LAPACK_float_complex * X, const __LAPACK_int INCX, __LAPACK_float_complex * Y,
+void cblas_csrot(const __LAPACK_int N, void * X, const __LAPACK_int INCX, void * Y,
                  const __LAPACK_int INCY, const float C, const float S);
-void cblas_zdrot(const __LAPACK_int N, __LAPACK_double_complex * X, const __LAPACK_int INCX, __LAPACK_double_complex * Y,
+void cblas_zdrot(const __LAPACK_int N, void * X, const __LAPACK_int INCX, void * Y,
                  const __LAPACK_int INCY, const double C, const double S);
 
 // MARK: ROTG
 void cblas_srotg(float * A, float * B, float * C, float * S);
 void cblas_drotg(double * A, double * B, double * C, double * S);
-void cblas_crotg(__LAPACK_float_complex * A, __LAPACK_float_complex * B, float * C, __LAPACK_float_complex * S);
-void cblas_zrotg(__LAPACK_double_complex * A, __LAPACK_double_complex * B, double * C, __LAPACK_double_complex * S);
+void cblas_crotg(void * A, void * B, float * C, void * S);
+void cblas_zrotg(void * A, void * B, double * C, void * S);
 
 // MARK: ROTM
 void cblas_srotm(const __LAPACK_int N, float * X, const __LAPACK_int INCX, float * Y,
@@ -185,13 +183,13 @@ void cblas_sscal(const __LAPACK_int N, const float ALPHA, float * X,
                  const __LAPACK_int INCX);
 void cblas_dscal(const __LAPACK_int N, const double ALPHA, double * X,
                  const __LAPACK_int INCX);
-void cblas_cscal(const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, __LAPACK_float_complex * X,
+void cblas_cscal(const __LAPACK_int N, void * ALPHA, void * X,
                  const __LAPACK_int INCX);
-void cblas_zscal(const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, __LAPACK_double_complex * X,
+void cblas_zscal(const __LAPACK_int N, void * ALPHA, void * X,
                  const __LAPACK_int INCX);
-void cblas_csscal(const __LAPACK_int N, const float ALPHA, __LAPACK_float_complex * X,
+void cblas_csscal(const __LAPACK_int N, const float ALPHA, void * X,
                   const __LAPACK_int INCX);
-void cblas_zdscal(const __LAPACK_int N, const double ALPHA, __LAPACK_double_complex * X,
+void cblas_zdscal(const __LAPACK_int N, const double ALPHA, void * X,
                   const __LAPACK_int INCX);
 
 // MARK: SET
@@ -199,9 +197,9 @@ void catlas_sset(const __LAPACK_int N, const float ALPHA, float * X,
                  const __LAPACK_int INCX);
 void catlas_dset(const __LAPACK_int N, const double ALPHA, double * X,
                  const __LAPACK_int INCX);
-void catlas_cset(const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, __LAPACK_float_complex * X,
+void catlas_cset(const __LAPACK_int N, void * ALPHA, void * X,
                  const __LAPACK_int INCX);
-void catlas_zset(const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, __LAPACK_double_complex * X,
+void catlas_zset(const __LAPACK_int N, void * ALPHA, void * X,
                  const __LAPACK_int INCX);
 
 // MARK: SWAP
@@ -209,9 +207,9 @@ void cblas_sswap(const __LAPACK_int N, float * X, const __LAPACK_int INCX, float
                  const __LAPACK_int INCY);
 void cblas_dswap(const __LAPACK_int N, double * X, const __LAPACK_int INCX, double * Y,
                  const __LAPACK_int INCY);
-void cblas_cswap(const __LAPACK_int N, __LAPACK_float_complex * X, const __LAPACK_int INCX, __LAPACK_float_complex * Y,
+void cblas_cswap(const __LAPACK_int N, void * X, const __LAPACK_int INCX, void * Y,
                  const __LAPACK_int INCY);
-void cblas_zswap(const __LAPACK_int N, __LAPACK_double_complex * X, const __LAPACK_int INCX, __LAPACK_double_complex * Y,
+void cblas_zswap(const __LAPACK_int N, void * X, const __LAPACK_int INCX, void * Y,
                  const __LAPACK_int INCY);
 
 
@@ -231,12 +229,12 @@ void cblas_dgemv(const enum CBLAS_ORDER ORDER,
                  const __LAPACK_int INCY);
 void cblas_cgemv(const enum CBLAS_ORDER ORDER,
                  const enum CBLAS_TRANSPOSE TRANSA, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, const __LAPACK_float_complex * X,
-                 const __LAPACK_int INCX, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * Y, const __LAPACK_int INCY);
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * X,
+                 const __LAPACK_int INCX, void * BETA, void * Y, const __LAPACK_int INCY);
 void cblas_zgemv(const enum CBLAS_ORDER ORDER,
                  const enum CBLAS_TRANSPOSE TRANSA, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, const __LAPACK_double_complex * X,
-                 const __LAPACK_int INCX, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * X,
+                 const __LAPACK_int INCX, void * BETA, void * Y, const __LAPACK_int INCY);
 
 // MARK: GBMV
 void cblas_sgbmv(const enum CBLAS_ORDER ORDER,
@@ -251,14 +249,14 @@ void cblas_dgbmv(const enum CBLAS_ORDER ORDER,
                  const __LAPACK_int INCX, const double BETA, double * Y, const __LAPACK_int INCY);
 void cblas_cgbmv(const enum CBLAS_ORDER ORDER,
                  const enum CBLAS_TRANSPOSE TRANSA, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_int KL, const __LAPACK_int KU, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A,
-                 const __LAPACK_int LDA, const __LAPACK_float_complex * X, const __LAPACK_int INCX, const __LAPACK_float_complex * BETA,
-                 __LAPACK_float_complex * Y, const __LAPACK_int INCY);
+                 const __LAPACK_int KL, const __LAPACK_int KU, void * ALPHA, void * A,
+                 const __LAPACK_int LDA, void * X, const __LAPACK_int INCX, void * BETA,
+                 void * Y, const __LAPACK_int INCY);
 void cblas_zgbmv(const enum CBLAS_ORDER ORDER,
                  const enum CBLAS_TRANSPOSE TRANSA, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_int KL, const __LAPACK_int KU, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A,
-                 const __LAPACK_int LDA, const __LAPACK_double_complex * X, const __LAPACK_int INCX, const __LAPACK_double_complex * BETA,
-                 __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+                 const __LAPACK_int KL, const __LAPACK_int KU, void * ALPHA, void * A,
+                 const __LAPACK_int LDA, void * X, const __LAPACK_int INCX, void * BETA,
+                 void * Y, const __LAPACK_int INCY);
 // MARK: GER
 void cblas_sger(const enum CBLAS_ORDER ORDER, const __LAPACK_int M, const __LAPACK_int N,
                 const float ALPHA, const float * X, const __LAPACK_int INCX,
@@ -268,71 +266,71 @@ void cblas_dger(const enum CBLAS_ORDER ORDER, const __LAPACK_int M, const __LAPA
                 const double * Y, const __LAPACK_int INCY, double * A, const __LAPACK_int LDA);
 // MARK: GERC
 void cblas_cgerc(const enum CBLAS_ORDER ORDER, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_float_complex * Y, const __LAPACK_int INCY, __LAPACK_float_complex * A, const __LAPACK_int LDA);
+                 void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * A, const __LAPACK_int LDA);
 void cblas_zgerc(const enum CBLAS_ORDER ORDER, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_double_complex * Y, const __LAPACK_int INCY, __LAPACK_double_complex * A, const __LAPACK_int LDA);
+                 void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * A, const __LAPACK_int LDA);
 // MARK: GERU
 void cblas_cgeru(const enum CBLAS_ORDER ORDER, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_float_complex * Y, const __LAPACK_int INCY, __LAPACK_float_complex * A, const __LAPACK_int LDA);
+                 void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * A, const __LAPACK_int LDA);
 void cblas_zgeru(const enum CBLAS_ORDER ORDER, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_double_complex * Y, const __LAPACK_int INCY, __LAPACK_double_complex * A, const __LAPACK_int LDA);
+                 void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * A, const __LAPACK_int LDA);
 // MARK: HBMV
 void cblas_chbmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_int K, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A,
-                 const __LAPACK_int LDA, const __LAPACK_float_complex * X, const __LAPACK_int INCX, const __LAPACK_float_complex * BETA,
-                 __LAPACK_float_complex * Y, const __LAPACK_int INCY);
+                 const __LAPACK_int N, const __LAPACK_int K, void * ALPHA, void * A,
+                 const __LAPACK_int LDA, void * X, const __LAPACK_int INCX, void * BETA,
+                 void * Y, const __LAPACK_int INCY);
 void cblas_zhbmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_int K, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A,
-                 const __LAPACK_int LDA, const __LAPACK_double_complex * X, const __LAPACK_int INCX, const __LAPACK_double_complex * BETA,
-                 __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+                 const __LAPACK_int N, const __LAPACK_int K, void * ALPHA, void * A,
+                 const __LAPACK_int LDA, void * X, const __LAPACK_int INCX, void * BETA,
+                 void * Y, const __LAPACK_int INCY);
 // MARK: HEMV
 void cblas_chemv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA,
-                 const __LAPACK_float_complex * X, const __LAPACK_int INCX, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * Y,
+                 const __LAPACK_int N, void * ALPHA, void * A, const __LAPACK_int LDA,
+                 void * X, const __LAPACK_int INCX, void * BETA, void * Y,
                  const __LAPACK_int INCY);
 void cblas_zhemv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA,
-                 const __LAPACK_double_complex * X, const __LAPACK_int INCX, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * Y,
+                 const __LAPACK_int N, void * ALPHA, void * A, const __LAPACK_int LDA,
+                 void * X, const __LAPACK_int INCX, void * BETA, void * Y,
                  const __LAPACK_int INCY);
 // MARK: HER
 void cblas_cher(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                const __LAPACK_int N, const float ALPHA, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                __LAPACK_float_complex * A, const __LAPACK_int LDA);
+                const __LAPACK_int N, const float ALPHA, void * X, const __LAPACK_int INCX,
+                void * A, const __LAPACK_int LDA);
 void cblas_zher(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                const __LAPACK_int N, const double ALPHA, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                __LAPACK_double_complex * A, const __LAPACK_int LDA);
+                const __LAPACK_int N, const double ALPHA, void * X, const __LAPACK_int INCX,
+                void * A, const __LAPACK_int LDA);
 // MARK: HER2
 void cblas_cher2(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_float_complex * Y, const __LAPACK_int INCY, __LAPACK_float_complex * A, const __LAPACK_int LDA);
+                 const __LAPACK_int N, void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * A, const __LAPACK_int LDA);
 void cblas_zher2(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_double_complex * Y, const __LAPACK_int INCY, __LAPACK_double_complex * A, const __LAPACK_int LDA);
+                 const __LAPACK_int N, void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * A, const __LAPACK_int LDA);
 // MARK: HPMV
 void cblas_chpmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * AP, const __LAPACK_float_complex * X,
-                 const __LAPACK_int INCX, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * Y, const __LAPACK_int INCY);
+                 const __LAPACK_int N, void * ALPHA, void * AP, void * X,
+                 const __LAPACK_int INCX, void * BETA, void * Y, const __LAPACK_int INCY);
 void cblas_zhpmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * AP, const __LAPACK_double_complex * X,
-                 const __LAPACK_int INCX, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * Y, const __LAPACK_int INCY);
+                 const __LAPACK_int N, void * ALPHA, void * AP, void * X,
+                 const __LAPACK_int INCX, void * BETA, void * Y, const __LAPACK_int INCY);
 // MARK: HPR
 void cblas_chpr(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                const __LAPACK_int N, const float ALPHA, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                __LAPACK_float_complex * A);
+                const __LAPACK_int N, const float ALPHA, void * X, const __LAPACK_int INCX,
+                void * A);
 void cblas_zhpr(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                const __LAPACK_int N, const double ALPHA, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                __LAPACK_double_complex * A);
+                const __LAPACK_int N, const double ALPHA, void * X, const __LAPACK_int INCX,
+                void * A);
 // MARK: HPR2
 void cblas_chpr2(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_float_complex * Y, const __LAPACK_int INCY, __LAPACK_float_complex * AP);
+                 const __LAPACK_int N, void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * AP);
 void cblas_zhpr2(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
-                 const __LAPACK_int N, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * X, const __LAPACK_int INCX,
-                 const __LAPACK_double_complex * Y, const __LAPACK_int INCY, __LAPACK_double_complex * AP);
+                 const __LAPACK_int N, void * ALPHA, void * X, const __LAPACK_int INCX,
+                 void * Y, const __LAPACK_int INCY, void * AP);
 // MARK: SBMV
 void cblas_ssbmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const __LAPACK_int N, const __LAPACK_int K, const float ALPHA, const float * A,
@@ -400,12 +398,12 @@ void cblas_dtbmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  double * X, const __LAPACK_int INCX);
 void cblas_ctbmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_int K, const __LAPACK_float_complex * A, const __LAPACK_int LDA,
-                 __LAPACK_float_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, const __LAPACK_int K, void * A, const __LAPACK_int LDA,
+                 void * X, const __LAPACK_int INCX);
 void cblas_ztbmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_int K, const __LAPACK_double_complex * A, const __LAPACK_int LDA,
-                 __LAPACK_double_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, const __LAPACK_int K, void * A, const __LAPACK_int LDA,
+                 void * X, const __LAPACK_int INCX);
 // MARK: TBSV
 void cblas_stbsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
@@ -417,12 +415,12 @@ void cblas_dtbsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  double * X, const __LAPACK_int INCX);
 void cblas_ctbsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_int K, const __LAPACK_float_complex * A, const __LAPACK_int LDA,
-                 __LAPACK_float_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, const __LAPACK_int K, void * A, const __LAPACK_int LDA,
+                 void * X, const __LAPACK_int INCX);
 void cblas_ztbsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_int K, const __LAPACK_double_complex * A, const __LAPACK_int LDA,
-                 __LAPACK_double_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, const __LAPACK_int K, void * A, const __LAPACK_int LDA,
+                 void * X, const __LAPACK_int INCX);
 // MARK: TPMV
 void cblas_stpmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
@@ -432,10 +430,10 @@ void cblas_dtpmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const __LAPACK_int N, const double * AP, double * X, const __LAPACK_int INCX);
 void cblas_ctpmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_float_complex * AP, __LAPACK_float_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, void * AP, void * X, const __LAPACK_int INCX);
 void cblas_ztpmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_double_complex * AP, __LAPACK_double_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, void * AP, void * X, const __LAPACK_int INCX);
 // MARK: TPSV
 void cblas_stpsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
@@ -445,10 +443,10 @@ void cblas_dtpsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const __LAPACK_int N, const double * AP, double * X, const __LAPACK_int INCX);
 void cblas_ctpsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_float_complex * AP, __LAPACK_float_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, void * AP, void * X, const __LAPACK_int INCX);
 void cblas_ztpsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_double_complex * AP, __LAPACK_double_complex * X, const __LAPACK_int INCX);
+                 const __LAPACK_int N, void * AP, void * X, const __LAPACK_int INCX);
 
 // MARK: TRMV
 void cblas_strmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
@@ -461,11 +459,11 @@ void cblas_dtrmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const __LAPACK_int INCX);
 void cblas_ctrmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_float_complex * A, const __LAPACK_int LDA, __LAPACK_float_complex * X,
+                 const __LAPACK_int N, void * A, const __LAPACK_int LDA, void * X,
                  const __LAPACK_int INCX);
 void cblas_ztrmv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_double_complex * A, const __LAPACK_int LDA, __LAPACK_double_complex * X,
+                 const __LAPACK_int N, void * A, const __LAPACK_int LDA, void * X,
                  const __LAPACK_int INCX);
 // MARK: TRSV
 void cblas_strsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
@@ -478,11 +476,11 @@ void cblas_dtrsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const __LAPACK_int INCX);
 void cblas_ctrsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_float_complex * A, const __LAPACK_int LDA, __LAPACK_float_complex * X,
+                 const __LAPACK_int N, void * A, const __LAPACK_int LDA, void * X,
                  const __LAPACK_int INCX);
 void cblas_ztrsv(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANSA, const enum CBLAS_DIAG DIAG,
-                 const __LAPACK_int N, const __LAPACK_double_complex * A, const __LAPACK_int LDA, __LAPACK_double_complex * X,
+                 const __LAPACK_int N, void * A, const __LAPACK_int LDA, void * X,
                  const __LAPACK_int INCX);
 // MARK: BLAS Level 3
 
@@ -502,42 +500,42 @@ void cblas_dgemm(const enum CBLAS_ORDER ORDER,
 void cblas_cgemm(const enum CBLAS_ORDER ORDER,
                  const enum CBLAS_TRANSPOSE TRANSA,
                  const enum CBLAS_TRANSPOSE TRANSB, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_int K, const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA,
-                 const __LAPACK_float_complex * B, const __LAPACK_int LDB, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * C,
+                 const __LAPACK_int K, void * ALPHA, void * A, const __LAPACK_int LDA,
+                 void * B, const __LAPACK_int LDB, void * BETA, void * C,
                  const __LAPACK_int LDC);
 void cblas_zgemm(const enum CBLAS_ORDER ORDER,
                  const enum CBLAS_TRANSPOSE TRANSA,
                  const enum CBLAS_TRANSPOSE TRANSB, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_int K, const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA,
-                 const __LAPACK_double_complex * B, const __LAPACK_int LDB, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * C,
+                 const __LAPACK_int K, void * ALPHA, void * A, const __LAPACK_int LDA,
+                 void * B, const __LAPACK_int LDB, void * BETA, void * C,
                  const __LAPACK_int LDC);
 // MARK: HEMM
 void cblas_chemm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, const __LAPACK_float_complex * B,
-                 const __LAPACK_int LDB, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * C, const __LAPACK_int LDC);
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                 const __LAPACK_int LDB, void * BETA, void * C, const __LAPACK_int LDC);
 void cblas_zhemm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, const __LAPACK_double_complex * B,
-                 const __LAPACK_int LDB, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * C, const __LAPACK_int LDC);
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                 const __LAPACK_int LDB, void * BETA, void * C, const __LAPACK_int LDC);
 // MARK: HERK
 void cblas_cherk(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                 const float ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA,
-                 const float BETA, __LAPACK_float_complex * C, const __LAPACK_int LDC);
+                 const float ALPHA, void * A, const __LAPACK_int LDA,
+                 const float BETA, void * C, const __LAPACK_int LDC);
 void cblas_zherk(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                 const double ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA,
-                 const double BETA, __LAPACK_double_complex * C, const __LAPACK_int LDC);
+                 const double ALPHA, void * A, const __LAPACK_int LDA,
+                 const double BETA, void * C, const __LAPACK_int LDC);
 // MARK: HER2K
 void cblas_cher2k(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                   const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                  const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, const __LAPACK_float_complex * B,
-                  const __LAPACK_int LDB, const float BETA, __LAPACK_float_complex * C, const __LAPACK_int LDC);
+                  void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                  const __LAPACK_int LDB, const float BETA, void * C, const __LAPACK_int LDC);
 void cblas_zher2k(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                   const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                  const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, const __LAPACK_double_complex * B,
-                  const __LAPACK_int LDB, const double BETA, __LAPACK_double_complex * C, const __LAPACK_int LDC);
+                  void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                  const __LAPACK_int LDB, const double BETA, void * C, const __LAPACK_int LDC);
 // MARK: SYMM
 void cblas_ssymm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const __LAPACK_int M, const __LAPACK_int N,
@@ -551,12 +549,12 @@ void cblas_dsymm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const __LAPACK_int LDC);
 void cblas_csymm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, const __LAPACK_float_complex * B,
-                 const __LAPACK_int LDB, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * C, const __LAPACK_int LDC);
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                 const __LAPACK_int LDB, void * BETA, void * C, const __LAPACK_int LDC);
 void cblas_zsymm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, const __LAPACK_double_complex * B,
-                 const __LAPACK_int LDB, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * C, const __LAPACK_int LDC);
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                 const __LAPACK_int LDB, void * BETA, void * C, const __LAPACK_int LDC);
 // MARK: SYRK
 void cblas_ssyrk(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
@@ -568,12 +566,12 @@ void cblas_dsyrk(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const double BETA, double * C, const __LAPACK_int LDC);
 void cblas_csyrk(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA,
-                 const __LAPACK_float_complex * BETA, __LAPACK_float_complex * C, const __LAPACK_int LDC);
+                 void * ALPHA, void * A, const __LAPACK_int LDA,
+                 void * BETA, void * C, const __LAPACK_int LDC);
 void cblas_zsyrk(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                  const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA,
-                 const __LAPACK_double_complex * BETA, __LAPACK_double_complex * C, const __LAPACK_int LDC);
+                 void * ALPHA, void * A, const __LAPACK_int LDA,
+                 void * BETA, void * C, const __LAPACK_int LDC);
 // MARK: SYR2K
 void cblas_ssyr2k(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                   const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
@@ -587,12 +585,12 @@ void cblas_dsyr2k(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                   const __LAPACK_int LDC);
 void cblas_csyr2k(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                   const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                  const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, const __LAPACK_float_complex * B,
-                  const __LAPACK_int LDB, const __LAPACK_float_complex * BETA, __LAPACK_float_complex * C, const __LAPACK_int LDC);
+                  void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                  const __LAPACK_int LDB, void * BETA, void * C, const __LAPACK_int LDC);
 void cblas_zsyr2k(const enum CBLAS_ORDER ORDER, const enum CBLAS_UPLO UPLO,
                   const enum CBLAS_TRANSPOSE TRANS, const __LAPACK_int N, const __LAPACK_int K,
-                  const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, const __LAPACK_double_complex * B,
-                  const __LAPACK_int LDB, const __LAPACK_double_complex * BETA, __LAPACK_double_complex * C, const __LAPACK_int LDC);
+                  void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
+                  const __LAPACK_int LDB, void * BETA, void * C, const __LAPACK_int LDC);
 // MARK: TRMM
 void cblas_strmm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const enum CBLAS_TRANSPOSE TRANSA,
@@ -607,12 +605,12 @@ void cblas_dtrmm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
 void cblas_ctrmm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const enum CBLAS_TRANSPOSE TRANSA,
                  const enum CBLAS_DIAG DIAG, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, __LAPACK_float_complex * B,
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
                  const __LAPACK_int LDB);
 void cblas_ztrmm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const enum CBLAS_TRANSPOSE TRANSA,
                  const enum CBLAS_DIAG DIAG, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, __LAPACK_double_complex * B,
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
                  const __LAPACK_int LDB);
 // MARK: TRSM
 void cblas_strsm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
@@ -628,10 +626,10 @@ void cblas_dtrsm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
 void cblas_ctrsm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const enum CBLAS_TRANSPOSE TRANSA,
                  const enum CBLAS_DIAG DIAG, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_float_complex * ALPHA, const __LAPACK_float_complex * A, const __LAPACK_int LDA, __LAPACK_float_complex * B,
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
                  const __LAPACK_int LDB);
 void cblas_ztrsm(const enum CBLAS_ORDER ORDER, const enum CBLAS_SIDE SIDE,
                  const enum CBLAS_UPLO UPLO, const enum CBLAS_TRANSPOSE TRANSA,
                  const enum CBLAS_DIAG DIAG, const __LAPACK_int M, const __LAPACK_int N,
-                 const __LAPACK_double_complex * ALPHA, const __LAPACK_double_complex * A, const __LAPACK_int LDA, __LAPACK_double_complex * B,
+                 void * ALPHA, void * A, const __LAPACK_int LDA, void * B,
                  const __LAPACK_int LDB);
