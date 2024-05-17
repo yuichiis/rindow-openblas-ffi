@@ -120,6 +120,8 @@ class LapackTest extends TestCase
             [-3.49,  4.02,  9.80, 10.00,  4.27,],
             [ 9.84,  0.15, -8.99, -6.02, -5.31,],
         ],dtype:$dtype);
+        echo "---- a ----\n";
+        echo $this->arrayToString($a,'%10.6f',true)."\n";
         $fullMatrices = null;
         $this->assertEquals([6,5],$a->shape());
         [
