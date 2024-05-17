@@ -52,6 +52,8 @@ for($i=0;$i<$n;$i++) {
     var_dump($y[$i]);
 }
 
+$lapack = $factory->Lapackb();
+echo "lapackb loaded\n";
 
 /*
 $loader = include __DIR__.'/vendor/autoload.php';
