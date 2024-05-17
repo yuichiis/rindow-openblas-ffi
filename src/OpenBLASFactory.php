@@ -146,12 +146,16 @@ class OpenBLASFactory
             if($code===false) {
                 throw new RuntimeException('The header file not found: "'.$param['header'].'"');
             }
+            echo "header: ".$param['header']."\n";
             foreach($param['libs'] as $filename) {
                 $ffi = null;
                 try {
                     $ffi = FFI::cdef($code,$filename);
+                    echo "loaded: ".$filename."\n";
                 } catch(FFIException $e) {
                     $this->errors[] = $e->getMessage();
+                    echo "fail: ".$filename."\n";
+                    echo $e->getMessage()."\n";
                     continue;
                 }
                 $ffis[$key] = $ffi;
@@ -191,7 +195,7 @@ class OpenBLASFactory
     public function Lapackb() : Lapackb
     {
         if(self::$ffiLapack==null) {
-            throw new RuntimeException('lapacke library not loaded.');
+            throw new RuntimeException('lapack library not loaded.');
         }
         return new Lapackb(self::$ffiLapack, self::$ffi);
     }
