@@ -37,7 +37,7 @@ class Lapackb
         return $this->ffi;
     }
 
-    private function transpose(int $m, int $n, int $dtype, object $from, object $to)
+    private function transpose(int $m, int $n, int $dtype, object $A, int $ldA, object $B, int $ldB)
     {
         $ffi = $this->ffi;
         $blas = $this->blas;
@@ -57,20 +57,20 @@ class Lapackb
                 self::LAPACK_ROW_MAJOR,BLAS::Trans,BLAS::NoTrans,
                 $n,$m,$m,
                 1.0,
-                $from,$n,
+                $A,$ldA,
                 $identity_p,$m,
                 0.0,
-                $to,$m
+                $B,$ldB
             );
         } else {
             $blas->cblas_dgemm(
                 self::LAPACK_ROW_MAJOR,BLAS::Trans,BLAS::NoTrans,
                 $n,$m,$m,
                 1.0,
-                $from,$n,
+                $A,$ldA,
                 $identity_p,$m,
                 0.0,
-                $to,$m
+                $B,$ldB
             );
         }
 
@@ -153,7 +153,7 @@ class Lapackb
         if($matrix_layout==self::LAPACK_ROW_MAJOR) {
             $size = $m*$n;
             $targetA_p = $ffi->new("{$type}[{$size}]");
-            $this->transpose($m,$n,$dtype,$A->addr($offsetA),$targetA_p);
+            $this->transpose($m,$n,$dtype,$A->addr($offsetA),$ldA,$targetA_p,$m);
             $size = $m*$m;
             $targetU_p = $ffi->new("{$type}[{$size}]");
             $size = $n*$n;
@@ -295,8 +295,8 @@ class Lapackb
         $bytes = min(min($m,$n)-1,$lwork-1)*$ffi::sizeof($ffi->type("{$type}"));
         $ffi::memcpy($SuperB->addr($offsetSuperB),$ffi::addr($work[1]),$bytes);
         if($matrix_layout==self::LAPACK_ROW_MAJOR) {
-            $this->transpose($m,$m,$dtype,$targetU_p,$U->addr($offsetU));
-            $this->transpose($n,$n,$dtype,$targetVT_p,$VT->addr($offsetVT));
+            $this->transpose($m,$m,$dtype,$targetU_p,$m,$U->addr($offsetU),$ldU);
+            $this->transpose($n,$n,$dtype,$targetVT_p,$n,$VT->addr($offsetVT),$ldVT);
         }
     }
 }
