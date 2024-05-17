@@ -1,10 +1,10 @@
 typedef int32_t                     __LAPACK_int;
-struct _openblas_complex_float { float real, imag; };
-struct _openblas_complex_double { double real, imag; };
-typedef struct _openblas_complex_float __LAPACK_float_complex;
-typedef struct _openblas_complex_double __LAPACK_double_complex;
-typedef struct _openblas_complex_float openblas_complex_float;
-typedef struct _openblas_complex_double openblas_complex_double;
+struct _rindow_complex_float { float real, imag; };
+struct _rindow_complex_double { double real, imag; };
+typedef struct _rindow_complex_float __LAPACK_float_complex;
+typedef struct _rindow_complex_double __LAPACK_double_complex;
+typedef struct _rindow_complex_float rindow_complex_float;
+typedef struct _rindow_complex_double rindow_complex_double;
 
 enum CBLAS_ORDER {CblasRowMajor=101, CblasColMajor=102 };
 enum CBLAS_TRANSPOSE {CblasNoTrans=111, CblasTrans=112, CblasConjTrans=113, AtlasConj=114};

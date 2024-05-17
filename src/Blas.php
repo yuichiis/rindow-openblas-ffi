@@ -63,13 +63,13 @@ class Blas
         $ffi = $this->ffi;
         switch($dtype) {
             case NDArray::complex64: {
-                $to = $ffi->new('openblas_complex_float');
+                $to = $ffi->new('rindow_complex_float');
                 $to->real = $from->real;
                 $to->imag = $from->imag;
                 break;
             }
             case NDArray::complex128: {
-                $to = $ffi->new('openblas_complex_double');
+                $to = $ffi->new('rindow_complex_double');
                 $to->real = $from->real;
                 $to->imag = $from->imag;
                 break;
