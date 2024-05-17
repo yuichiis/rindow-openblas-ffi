@@ -1,14 +1,17 @@
 <?php
-namespace RindowTest\OpenBLAS\FFI\LapackbTest;
+namespace RindowTest\OpenBLAS\FFI\LapackeTest;
 
 require_once __DIR__.'/LapackTest.php';
 use RindowTest\OpenBLAS\FFI\LapackTest\LapackTest;
 
-class LapackbTest extends LapackTest
+/**
+ * @requires OS WINNT|Linux
+ */
+class LapackeTest extends LapackTest
 {
     public function getLapack()
     {
-        $lapack = $this->factory->Lapackb();
+        $lapack = $this->factory->Lapack();
         return $lapack;
     }
 }
