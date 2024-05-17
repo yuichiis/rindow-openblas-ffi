@@ -29,7 +29,7 @@ class LapackTest extends TestCase
 
     public function getLapack()
     {
-        $lapack = $this->factory->Lapack();
+        $lapack = $this->factory->Lapackb();
         return $lapack;
     }
 
