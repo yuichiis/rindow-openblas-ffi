@@ -27,6 +27,16 @@ class Lapack
         $this->ffi = $ffi;
     }
 
+    public function setMo($mo)
+    {
+        $this->mo = $mo;
+    }
+
+    public function ffi() : object
+    {
+        return $this->ffi;
+    }
+
     public function gesvd(
         int $matrix_layout,
         int $jobu,
