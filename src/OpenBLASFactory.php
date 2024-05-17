@@ -139,6 +139,9 @@ class OpenBLASFactory
     {
         $ffis = [];
         foreach($params as $key => $param) {
+            if(!isset($param['header'])) {
+                continue;
+            }
             $code = file_get_contents($param['header']);
             if($code===false) {
                 throw new RuntimeException('The header file not found: "'.$param['header'].'"');
