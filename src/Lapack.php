@@ -27,6 +27,11 @@ class Lapack
         $this->ffi = $ffi;
     }
 
+    public function ffi() : object
+    {
+        return $this->ffi;
+    }
+
     public function gesvd(
         int $matrix_layout,
         int $jobu,

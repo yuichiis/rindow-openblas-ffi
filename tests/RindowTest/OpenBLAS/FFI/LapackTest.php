@@ -58,8 +58,8 @@ class LapackTest extends TestCase
         }
 
         $S = $this->zeros([min($m,$n)],$matrix->dtype());
-        $U = $this->zeros([$m,$ldU],$matrix->dtype());
-        $VT = $this->zeros([$ldVT,$n],$matrix->dtype());
+        $U = $this->zeros([$m,$m],$matrix->dtype());
+        $VT = $this->zeros([$n,$n],$matrix->dtype());
         $SuperB = $this->zeros([min($m,$n)-1],$matrix->dtype());
 
         $AA = $matrix->buffer();
