@@ -6,6 +6,7 @@ use Interop\Polite\Math\Matrix\BLAS;
 use InvalidArgumentException;
 use RuntimeException;
 use FFI;
+use ArrayObject;
 
 use Interop\Polite\Math\Matrix\LinearBuffer as BufferInterface;
 
@@ -37,7 +38,11 @@ class Lapackb
         return $this->ffi;
     }
 
-    private function transpose(int $m, int $n, int $dtype, object $A, int $ldA, object $B, int $ldB)
+    private function transpose(
+        int $m, int $n, int $dtype,
+        object $A, int $ldA,
+        object $B, int $ldB
+        ) : void
     {
         $ffi = $this->ffi;
         $blas = $this->blas;
@@ -45,6 +50,8 @@ class Lapackb
             $type = 'float';
         } elseif($dtype==NDArray::float64) {
             $type = 'double';
+        } else {
+            throw new InvalidArgumentException("Unsupport data type", 0);
         }
         $size = $m*$m;
         $identity_p = $ffi->new("{$type}[{$size}]");
@@ -201,6 +208,7 @@ class Lapackb
         $ldVT_p[0] = $ldVT0;
         $lwork_p = $ffi->new("lapack_int[1]");
         $lwork_p[0] = -1;
+        /** @var ArrayObject<int,int> $info_p */
         $info_p = $ffi->new("lapack_int[1]");
         $info_p[0] = 0;
 
@@ -288,7 +296,7 @@ class Lapackb
             throw new RuntimeException( "Not enough memory to allocate work array.", $info);
         } else if( $info == self::LAPACK_TRANSPOSE_MEMORY_ERROR ) {
             throw new RuntimeException( "Not enough memory to transpose matrix.", $info);
-        } else if( $info < 0 ) {
+        } else if( $info != 0 ) {
             throw new RuntimeException( "Wrong parameter. error=$info", $info);
         }
 

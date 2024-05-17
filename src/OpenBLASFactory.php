@@ -13,6 +13,7 @@ class OpenBLASFactory
     private static ?FFI $ffi = null;
     private static ?FFI $ffiLapacke = null;
     private static ?FFI $ffiLapack = null;
+    /** @var array<string,array<string,array<string,mixed>>> $configMatrix */
     protected array $configMatrix = [
         'WINNT' => [
             'blas' => [
@@ -103,6 +104,18 @@ class OpenBLASFactory
         }
     }
 
+    /**
+     * @return array<string>
+     */
+    public function errors() : array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @param  array<string,array<string,mixed>> $params
+     * @return array<string,array<string,mixed>>
+     */
     protected function generateConfig(array $params) : array
     {
         $os = PHP_OS;
@@ -118,14 +131,17 @@ class OpenBLASFactory
         return $params;
     }
 
+    /**
+     * @param array<array<mixed>> $params
+     * @return array<mixed>
+     */
     protected function loadLibraries(array $params) : array
     {
-        /** @var array<objects> $ffis */
         $ffis = [];
         foreach($params as $key => $param) {
             $code = file_get_contents($param['header']);
             if($code===false) {
-                throw new RuntimeException('The header file not found: "'.$name['header'].'"');
+                throw new RuntimeException('The header file not found: "'.$param['header'].'"');
             }
             foreach($param['libs'] as $filename) {
                 $ffi = null;
