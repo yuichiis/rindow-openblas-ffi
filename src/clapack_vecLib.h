@@ -2,6 +2,7 @@
 
 typedef int32_t                     __CLPK_integer;
 typedef float                       __CLPK_real;
+typedef double                      __CLPK_doublereal;
 
 int sgesvd_(char *__jobu, char *__jobvt, __CLPK_integer *__m,
         __CLPK_integer *__n, __CLPK_real *__a, __CLPK_integer *__lda,
