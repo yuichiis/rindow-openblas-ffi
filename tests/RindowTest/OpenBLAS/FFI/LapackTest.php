@@ -84,7 +84,7 @@ class LapackTest extends TestCase
             $VVT, $offsetVT, $ldVT,
             $SuperBB,  $offsetSuperB,
 
-            $U,$S,$VT
+            $U,$S,$VT,$SuperB
         ];
         //if(!$fullMatrices) {
         //    // bug in the lapacke ???
@@ -93,8 +93,24 @@ class LapackTest extends TestCase
         //return [$U,$S,$VT];
     }
 
-    public function testSvdFull1()
+    public static function providerDtypesFloats()
     {
+        return [
+            'float32' => [[
+                'dtype' => NDArray::float32,
+            ]],
+            'float64' => [[
+                'dtype' => NDArray::float64,
+            ]],
+        ];
+    }
+
+    /**
+    * @dataProvider providerDtypesFloats
+    */
+    public function testSvdFull1($params)
+    {
+        extract($params);
         $lapack = $this->getLapack();
         $a = $this->array([
             [ 8.79,  9.93,  9.83,  5.45,  3.16,],
@@ -103,7 +119,7 @@ class LapackTest extends TestCase
             [ 9.57,  1.64,  8.83,  0.74,  5.80,],
             [-3.49,  4.02,  9.80, 10.00,  4.27,],
             [ 9.84,  0.15, -8.99, -6.02, -5.31,],
-        ]);
+        ],dtype:$dtype);
         $fullMatrices = null;
         $this->assertEquals([6,5],$a->shape());
         [
@@ -118,7 +134,7 @@ class LapackTest extends TestCase
             $VVT, $offsetVT, $ldVT,
             $SuperBB,  $offsetSuperB,
 
-            $u,$s,$vt
+            $u,$s,$vt,$superB
         ] = $this->translate_gesvd($a,$fullMatrices);
 
         $lapack->gesvd(
@@ -135,7 +151,7 @@ class LapackTest extends TestCase
         );
         if(!$fullMatrices) {
             // bug in the lapacke ???
-            $vt = $this->copy($vt[[0,min($m,$n)-1]]);
+            //$vt = $this->copy($vt[[0,min($m,$n)-1]]);
         }
         // [$u,$s,$vt] = $la->svd($a);
         $this->assertEquals([6,6],$u->shape());
@@ -159,14 +175,18 @@ class LapackTest extends TestCase
             [-0.43, 0.24,-0.69, 0.33, 0.16,-0.39],
             [-0.47,-0.35, 0.39, 0.16,-0.52,-0.46],
             [ 0.29, 0.58,-0.02, 0.38,-0.65, 0.11],
-        ]);
+        ],dtype:$dtype);
         //$this->assertTrue(false);
+        echo "---- u ----\n";
+        echo $this->arrayToString($u,'%10.6f',true)."\n";
         $this->assertTrue($this->isclose($u,$correctU,rtol:1e-2,atol:1e-3));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($u,$correctU,-1))));
         # ---- s ----
         $correctS = $this->array(
             [27.47,22.64, 8.56, 5.99, 2.01]
-        );
+            ,dtype:$dtype);
+        echo "---- s ----\n";
+        echo $this->arrayToString($s,'%10.6f',true)."\n";
         $this->assertTrue($this->isclose($s,$correctS,rtol:1e-2,atol:1e-3));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($s,$correctS,-1))));
         # ---- vt ----
@@ -176,9 +196,14 @@ class LapackTest extends TestCase
             [-0.26, 0.70,-0.22, 0.39,-0.49],
             [ 0.40,-0.45, 0.25, 0.43,-0.62],
             [-0.22, 0.14, 0.59,-0.63,-0.44],
-        ]);
+        ],dtype:$dtype);
+        echo "---- vt ----\n";
+        echo $this->arrayToString($vt,'%10.6f',true)."\n";
         $this->assertTrue($this->isclose($vt,$correctVT,rtol:1e-2,atol:1e-3));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($vt,$correctVT,-1))));
+        # ---- superB ----
+        echo "---- superB ----\n";
+        echo $this->arrayToString($superB,'%10.6f',true)."\n";
     }
 
 }
