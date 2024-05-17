@@ -768,7 +768,7 @@ class BlasTest extends TestCase
     public function testComplexValue()
     {
         $blas = $this->getBlas();
-        $cval = $blas->getFFI()->new('rindow_complex_float');
+        $cval = $blas->getFFI()->new('openblas_complex_float');
         $this->assertTrue(is_a($cval,'FFI\CData'));
         $this->assertTrue($cval instanceof FFI\CData);
     }
