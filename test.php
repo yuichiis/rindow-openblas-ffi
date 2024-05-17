@@ -34,6 +34,27 @@
 //}
 
 $loader = include __DIR__.'/vendor/autoload.php';
+use Interop\Polite\Math\Matrix\NDArray;
+$factory = new Rindow\OpenBLAS\FFI\OpenBLASFactory();
+$buffer = new Rindow\Math\Buffer\FFI\BufferFactory();
+$blas = $factory->Blas();
+$n = 3;
+$x = $buffer->Buffer($n,NDArray::float32);
+$y = $buffer->Buffer($n,NDArray::float32);
+$x[0] = 1;
+$x[1] = 2;
+$x[2] = 3;
+$y[0] = 30;
+$y[1] = 20;
+$y[2] = 10;
+$blas->axpy($n,1.0,$x,0,1,$y,0,1);
+for($i=0;$i<$n;$i++) {
+    var_dump($y[$i]);
+}
+
+
+/*
+$loader = include __DIR__.'/vendor/autoload.php';
 $loader->addPsr4('Rindow\\Math\\Matrix\\',__DIR__.'/../rindow-math-matrix/src');
 $loader->addPsr4('Rindow\\Math\\Matrix\\Drivers\\MatlibFFI\\',__DIR__.'/../rindow-math-matrix-matlibffi/src');
 $loader->addPsr4('Rindow\\Matlib\\FFI\\',__DIR__.'/../rindow-matlib-ffi/src');
@@ -99,3 +120,4 @@ $lapack->gesvd(
 echo "S=".$mo->toString($S,'%6.2f',indent:true)."\n";
 echo "U=".$mo->toString($U,'%6.2f',indent:true)."\n";
 echo "VT=".$mo->toString($VT,'%6.2f',indent:true)."\n";
+*/
