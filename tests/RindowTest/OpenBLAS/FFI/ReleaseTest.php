@@ -6,6 +6,7 @@ use Interop\Polite\Math\Matrix\NDArray;
 use Rindow\OpenBLAS\FFI\OpenBLASFactory;
 use Rindow\OpenBLAS\FFI\Blas;
 use Rindow\OpenBLAS\FFI\Lapack;
+use Rindow\OpenBLAS\FFI\Lapackb;
 use FFI;
 
 require_once __DIR__.'/Utils.php';
@@ -24,9 +25,13 @@ class ReleaseTest extends TestCase
         $factory = $this->factory;
         if(extension_loaded('ffi')) {
             $blas = $factory->Blas();
-            $lapack = $factory->Lapack();
+            $lapackb = $factory->Lapackb();
             $this->assertInstanceof(Blas::class,$blas);
-            $this->assertInstanceof(Lapack::class,$lapack);
+            $this->assertInstanceof(Lapackb::class,$lapackb);
+            if(PHP_OS!='Darwin') {
+                $lapacke = $factory->Lapack();
+                $this->assertInstanceof(Lapack::class,$lapacke);
+            }
         } else {
             $this->assertFalse($factory->isAvailable());
         }

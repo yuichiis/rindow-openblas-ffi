@@ -1,5 +1,5 @@
 <?php
-namespace RindowTest\OpenBLAS\FFI\LapackTest;
+namespace RindowTest\OpenBLAS\FFI\LapackbTest;
 
 use PHPUnit\Framework\TestCase;
 use Interop\Polite\Math\Matrix\NDArray;
@@ -20,7 +20,7 @@ use ArrayAccess;
 require_once __DIR__.'/Utils.php';
 use RindowTest\OpenBLAS\FFI\Utils;
 
-class LapackTest extends TestCase
+class LapackbTest extends TestCase
 {
     use Utils;
 
