@@ -17,22 +17,22 @@ typedef int32_t                     lapack_int;
 /////////////////////////////////////////////
 //#define xdouble double
 typedef double xdouble;
-//#define OPENBLAS_COMPLEX_STRUCT
-struct _openblas_complex_float { float real, imag; };
-struct _openblas_complex_double { double real, imag; };
-struct _openblas_complex_xdouble { xdouble real, imag; };
-typedef struct _openblas_complex_float openblas_complex_float;
-typedef struct _openblas_complex_double openblas_complex_double;
-typedef struct _openblas_complex_xdouble openblas_complex_xdouble;
+//#define rindow_complex_STRUCT
+struct _rindow_complex_float { float real, imag; };
+struct _rindow_complex_double { double real, imag; };
+struct _rindow_complex_xdouble { xdouble real, imag; };
+typedef struct _rindow_complex_float rindow_complex_float;
+typedef struct _rindow_complex_double rindow_complex_double;
+typedef struct _rindow_complex_xdouble rindow_complex_xdouble;
 //#define openblas_make_complex_float(real, imag)    {(real), (imag)}
 //#define openblas_make_complex_double(real, imag)   {(real), (imag)}
 //#define openblas_make_complex_xdouble(real, imag)  {(real), (imag)}
-//#define openblas_complex_float_real(z)             ((z).real)
-//#define openblas_complex_float_imag(z)             ((z).imag)
-//#define openblas_complex_double_real(z)            ((z).real)
-//#define openblas_complex_double_imag(z)            ((z).imag)
-//#define openblas_complex_xdouble_real(z)           ((z).real)
-//#define openblas_complex_xdouble_imag(z)           ((z).imag)
+//#define rindow_complex_float_real(z)             ((z).real)
+//#define rindow_complex_float_imag(z)             ((z).imag)
+//#define rindow_complex_double_real(z)            ((z).real)
+//#define rindow_complex_double_imag(z)            ((z).imag)
+//#define rindow_complex_xdouble_real(z)           ((z).real)
+//#define rindow_complex_xdouble_imag(z)           ((z).imag)
 /////////////////////////////////////////////
 
 
@@ -84,10 +84,10 @@ double cblas_dsdot (const blasint n, const float *x, const blasint incx, const f
 float  cblas_sdot(const blasint n, const float  *x, const blasint incx, const float  *y, const blasint incy);
 double cblas_ddot(const blasint n, const double *x, const blasint incx, const double *y, const blasint incy);
 
-openblas_complex_float  cblas_cdotu(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy);
-openblas_complex_float  cblas_cdotc(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy);
-openblas_complex_double cblas_zdotu(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy);
-openblas_complex_double cblas_zdotc(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy);
+rindow_complex_float  cblas_cdotu(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy);
+rindow_complex_float  cblas_cdotc(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy);
+rindow_complex_double cblas_zdotu(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy);
+rindow_complex_double cblas_zdotc(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy);
 
 void  cblas_cdotu_sub(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy, void  *ret);
 void  cblas_cdotc_sub(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy, void  *ret);
