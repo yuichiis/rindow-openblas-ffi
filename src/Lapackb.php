@@ -2,6 +2,7 @@
 namespace Rindow\OpenBLAS\FFI;
 
 use Interop\Polite\Math\Matrix\NDArray;
+use Interop\Polite\Math\Matrix\BLAS;
 use InvalidArgumentException;
 use RuntimeException;
 use FFI;
@@ -23,21 +24,56 @@ class Lapackb
     const LAPACK_COL_MAJOR = 102;
 
     protected FFI $ffi;
-    protected $mo;
+    protected FFI $blas;
 
-    public function __construct(FFI $ffi)
+    public function __construct(FFI $ffi, FFI $blas)
     {
         $this->ffi = $ffi;
-    }
-
-    public function setMo($mo)
-    {
-        $this->mo = $mo;
+        $this->blas = $blas;
     }
 
     public function ffi() : object
     {
         return $this->ffi;
+    }
+
+    private function transpose(int $m, int $n, int $dtype, object $from, object $to)
+    {
+        $ffi = $this->ffi;
+        $blas = $this->blas;
+        if($dtype==NDArray::float32) {
+            $type = 'float';
+        } elseif($dtype==NDArray::float64) {
+            $type = 'double';
+        }
+        $size = $m*$m;
+        $identity_p = $ffi->new("{$type}[{$size}]");
+        $ffi::memset($identity_p,0,$ffi::sizeof($identity_p));
+        for($i=0;$i<$m;$i++) {
+            $identity_p[$i*$m+$i] = 1;
+        }
+        if($dtype==NDArray::float32) {
+            $blas->cblas_sgemm(
+                self::LAPACK_ROW_MAJOR,BLAS::Trans,BLAS::NoTrans,
+                $n,$m,$m,
+                1.0,
+                $from,$n,
+                $identity_p,$m,
+                0.0,
+                $to,$m
+            );
+        } else {
+            $blas->cblas_dgemm(
+                self::LAPACK_ROW_MAJOR,BLAS::Trans,BLAS::NoTrans,
+                $n,$m,$m,
+                1.0,
+                $from,$n,
+                $identity_p,$m,
+                0.0,
+                $to,$m
+            );
+        }
+
     }
 
     public function gesvd(
@@ -107,20 +143,31 @@ class Lapackb
         ) {
             throw new InvalidArgumentException("Unmatch data type", 0);
         }
+        if($dtype==NDArray::float32) {
+            $type = 'float';
+        } elseif($dtype==NDArray::float64) {
+            $type = 'double';
+        } else {
+            throw new InvalidArgumentException("Unsupport data type", 0);
+        }
         if($matrix_layout==self::LAPACK_ROW_MAJOR) {
-            $targetA = clone $A;
-            for($i=0;$i<$m;$i++) {
-                for($j=0;$j<$n;$j++) {
-                    $targetA[$j*$m+$i] = $A[$i*$n+$j];
-                }
-            }
-            $targetU = clone $U;
-            $targetVT = clone $VT;
-            $ldA = $m;
+            $size = $m*$n;
+            $targetA_p = $ffi->new("{$type}[{$size}]");
+            $this->transpose($m,$n,$dtype,$A->addr($offsetA),$targetA_p);
+            $size = $m*$m;
+            $targetU_p = $ffi->new("{$type}[{$size}]");
+            $size = $n*$n;
+            $targetVT_p = $ffi->new("{$type}[{$size}]");
+            $ldA0 = $m;
+            $ldU0 = $m;
+            $ldVT0 = $n;
         } elseif($matrix_layout==self::LAPACK_COL_MAJOR) {
-            $targetA = $A;
-            $targetU = $U;
-            $targetVT = $VT;
+            $targetA_p = $A->addr($offsetA);
+            $targetU_p = $U->addr($offsetU);
+            $targetVT_p = $VT->addr($offsetVT);
+            $ldA0 = $ldA;
+            $ldU0 = $ldU;
+            $ldVT0 = $ldVT;
         } else {
             throw new InvalidArgumentException("Invalid matrix_layout: $matrix_layout");
         }
@@ -129,7 +176,7 @@ class Lapackb
         for($i=0;$i<$m;$i++) {
             echo "[";
             for($j=0;$j<$n;$j++) {
-                echo sprintf('%10.6f',$targetA[$i+$j*$m]).",";
+                echo sprintf('%10.6f',$targetA_p[$i+$j*$m]).",";
             }
             echo "]\n";
         }
@@ -147,11 +194,11 @@ class Lapackb
         $n_p = $ffi->new('lapack_int[1]');
         $n_p[0] = $n;
         $ldA_p = $ffi->new('lapack_int[1]');
-        $ldA_p[0] = $ldA;
+        $ldA_p[0] = $ldA0;
         $ldU_p = $ffi->new('lapack_int[1]');
-        $ldU_p[0] = $ldU;
+        $ldU_p[0] = $ldU0;
         $ldVT_p = $ffi->new('lapack_int[1]');
-        $ldVT_p[0] = $ldVT;
+        $ldVT_p[0] = $ldVT0;
         $lwork_p = $ffi->new("lapack_int[1]");
         $lwork_p[0] = -1;
         $info_p = $ffi->new("lapack_int[1]");
@@ -161,29 +208,29 @@ class Lapackb
         //return;
         switch ($dtype) {
             case NDArray::float32:
-                $wkopt_p = $ffi->new("float[1]");
+                $wkopt_p = $ffi->new("{$type}[1]");
                 $ffi->sgesvd_(
                     $jobu_p,
                     $jobvt_p,
                     $m_p,$n_p,
-                    $targetA->addr($offsetA), $ldA_p,
+                    $targetA_p, $ldA_p,
                     $S->addr($offsetS),
-                    $targetU->addr($offsetU), $ldU_p,
-                    $targetVT->addr($offsetVT), $ldVT_p,
+                    $targetU_p, $ldU_p,
+                    $targetVT_p, $ldVT_p,
                     $wkopt_p,$lwork_p,
                     $info_p
                 );
                 break;
             case NDArray::float64:
-                $wkopt_p = $ffi->new("double[1]");
+                $wkopt_p = $ffi->new("{$type}[1]");
                 $ffi->dgesvd_(
                     $jobu_p,
                     $jobvt_p,
                     $m_p,$n_p,
-                    $targetA->addr($offsetA), $ldA_p,
+                    $targetA_p, $ldA_p,
                     $S->addr($offsetS),
-                    $targetU->addr($offsetU), $ldU_p,
-                    $targetVT->addr($offsetVT), $ldVT_p,
+                    $targetU_p, $ldU_p,
+                    $targetVT_p, $ldVT_p,
                     $wkopt_p,$lwork_p,
                     $info_p
                 );
@@ -205,29 +252,29 @@ class Lapackb
 
         switch ($dtype) {
             case NDArray::float32:
-                $work = $ffi->new("float[$lwork]");
+                $work = $ffi->new("{$type}[{$lwork}]");
                 $ffi->sgesvd_(
                     $jobu_p,
                     $jobvt_p,
                     $m_p,$n_p,
-                    $targetA->addr($offsetA), $ldA_p,
+                    $targetA_p, $ldA_p,
                     $S->addr($offsetS),
-                    $targetU->addr($offsetU), $ldU_p,
-                    $targetVT->addr($offsetVT), $ldVT_p,
+                    $targetU_p, $ldU_p,
+                    $targetVT_p, $ldVT_p,
                     $work,$lwork_p,
                     $info_p
                 );
                 break;
             case NDArray::float64:
-                $work = $ffi->new("double[$lwork]");
+                $work = $ffi->new("{$type}[{$lwork}]");
                 $ffi->dgesvd_(
                     $jobu_p,
                     $jobvt_p,
                     $m_p,$n_p,
-                    $targetA->addr($offsetA), $ldA_p,
+                    $targetA_p, $ldA_p,
                     $S->addr($offsetS),
-                    $targetU->addr($offsetU), $ldU_p,
-                    $targetVT->addr($offsetVT), $ldVT_p,
+                    $targetU_p, $ldU_p,
+                    $targetVT_p, $ldVT_p,
                     $work,$lwork_p,
                     $info_p
                 );
@@ -245,21 +292,11 @@ class Lapackb
             throw new RuntimeException( "Wrong parameter. error=$info", $info);
         }
 
-        $len = count($SuperB);
-        for($i=0; $i<$len; $i++ ) {
-            $SuperB[$i] = $work[$i+1];
-        }
+        $bytes = min(min($m,$n)-1,$lwork-1)*$ffi::sizeof($ffi->type("{$type}"));
+        $ffi::memcpy($SuperB->addr($offsetSuperB),$ffi::addr($work[1]),$bytes);
         if($matrix_layout==self::LAPACK_ROW_MAJOR) {
-            for($i=0;$i<$m;$i++) {
-                for($j=0;$j<$m;$j++) {
-                    $U[$j*$m+$i] = $targetU[$i*$m+$j];
-                }
-            }
-            for($i=0;$i<$n;$i++) {
-                for($j=0;$j<$n;$j++) {
-                    $VT[$j*$n+$i] = $targetVT[$i*$n+$j];
-                }
-            }
+            $this->transpose($m,$m,$dtype,$targetU_p,$U->addr($offsetU));
+            $this->transpose($n,$n,$dtype,$targetVT_p,$VT->addr($offsetVT));
         }
     }
 }

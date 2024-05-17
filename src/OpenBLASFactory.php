@@ -174,6 +174,6 @@ class OpenBLASFactory
         if(self::$ffiLapack==null) {
             throw new RuntimeException('lapacke library not loaded.');
         }
-        return new Lapackb(self::$ffiLapack);
+        return new Lapackb(self::$ffiLapack, self::$ffi);
     }
 }
