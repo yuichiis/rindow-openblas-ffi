@@ -2843,7 +2843,7 @@ class BlasTest extends TestCase
         ),$this->toComplex($Y->toArray()));
 
         // complex64 check no_trans and conj
-        if(PHP_OS!='Darwin') {
+        //if(PHP_OS!='Darwin') {
             $A = $this->array([[C(1,i:1),C(2,i:1),C(3,i:1)],[C(4,i:1),C(5,i:1),C(6,i:1)]],dtype:NDArray::complex64);
             $X = $this->array([C(100),C(10),C(1)],dtype:NDArray::complex64);
             $Y = $this->zeros([2],dtype:NDArray::complex64);
@@ -2864,7 +2864,7 @@ class BlasTest extends TestCase
             $this->assertEquals($this->toComplex(
                 [C(123,i:-111),C(456,i:-111)]
             ),$this->toComplex($Y->toArray()));
-        }
+        //}
     }
 
     public function testGemvMinusM()
