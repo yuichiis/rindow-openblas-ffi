@@ -1,3 +1,5 @@
+#define FFI_SCOPE "Rindow\\OpenBLAS\\FFI"
+
 typedef int32_t                     __LAPACK_int;
 typedef struct _openblas_complex_float { float real, imag; } openblas_complex_float;
 typedef struct _openblas_complex_double { double real, imag; } openblas_complex_double;
