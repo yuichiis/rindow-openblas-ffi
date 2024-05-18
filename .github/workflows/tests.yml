@@ -81,6 +81,7 @@ jobs:
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: php test.php
+        run: phpunit -c tests --filter BlasTest::testGemvNormal
 
-#        run: phpunit -c tests --filter BlasTest::testGemvTranspose
+#        run: php test.php
+#        run: phpunit -c tests --filter BlasTest::testGemvNormal
