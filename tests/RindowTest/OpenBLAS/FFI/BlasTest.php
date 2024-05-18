@@ -2772,10 +2772,7 @@ class BlasTest extends TestCase
             $beta,
             $YY,$offY,$incY);
 
-        for($i=0;$i<3;$i++) {
-            var_dump($YY[$i]);
-        }
-            
+        var_dump($Y->toArray());
         return;
 
         $this->assertEquals(
