@@ -743,7 +743,7 @@ class Blas
             throw new InvalidArgumentException("Unmatch data type for A and X and Y");
         }
         if($trans==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
-            throw new Exception("Unsupported dtype on MacOS: {$trans}");
+            throw new InvalidArgumentException("Unsupported dtype on MacOS: {$trans}");
         }
 
         switch($dtype) {
