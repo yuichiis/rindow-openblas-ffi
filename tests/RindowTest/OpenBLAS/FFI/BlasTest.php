@@ -2794,11 +2794,11 @@ class BlasTest extends TestCase
             $beta,
             $YY,$offY,$incY);
 
-/*
         $this->assertEquals($this->toComplex(
             [14,25,36]
         ),$this->toComplex($Y->toArray()));
 
+/*
         // complex64 check trans and conj
         $A = $this->array([[C(1,i:1),C(2,i:1),C(3,i:1)],[C(4,i:1),C(5,i:1),C(6,i:1)]],dtype:NDArray::complex64);
         $X = $this->array([C(10),C(1)],dtype:NDArray::complex64);
