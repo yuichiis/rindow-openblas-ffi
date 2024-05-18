@@ -2794,6 +2794,7 @@ class BlasTest extends TestCase
             $beta,
             $YY,$offY,$incY);
 
+        var_dump($Y->toArray());
 /*
         $this->assertEquals($this->toComplex(
             [14,25,36]
