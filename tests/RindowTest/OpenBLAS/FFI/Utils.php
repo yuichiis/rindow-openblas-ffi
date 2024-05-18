@@ -336,7 +336,11 @@ trait Utils
                 $shape = $this->shape;
                 $max = array_shift($shape);
                 if(count($shape)==0) {
-                    return $this->buffer[$this->offset+$offset];
+                    $v = $this->buffer[$this->offset+$offset];
+                    if($this->isComplex($this->dtype)) {
+                        $v = C($v->real,$v->imag);
+                    }
+                    return $v;
                 }
                 $size = (int)array_product($shape);
                 $new = new self($this->buffer,$this->dtype,$shape,$this->offset+$offset*$size);
