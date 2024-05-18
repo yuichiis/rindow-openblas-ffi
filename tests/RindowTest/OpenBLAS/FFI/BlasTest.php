@@ -2775,7 +2775,7 @@ class BlasTest extends TestCase
         $this->assertEquals(
             [14,25,36]
         ,$Y->toArray());
-/*
+
         // complex64
         $A = $this->array([[C(1),C(2),C(3)],[C(4),C(5),C(6)]],dtype:NDArray::complex64);
         $X = $this->array([C(10),C(1)],dtype:NDArray::complex64);
@@ -2785,6 +2785,7 @@ class BlasTest extends TestCase
           $XX,$offX,$incX,$beta,$YY,$offY,$incY] =
             $this->translate_gemv($A,$X,Y:$Y,trans:true);
 
+/*
         $blas->gemv(
             $order,$trans,
             $m,$n,
