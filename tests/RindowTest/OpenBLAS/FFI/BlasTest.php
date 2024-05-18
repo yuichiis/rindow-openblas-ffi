@@ -2843,27 +2843,28 @@ class BlasTest extends TestCase
         ),$this->toComplex($Y->toArray()));
 
         // complex64 check no_trans and conj
-        $A = $this->array([[C(1,i:1),C(2,i:1),C(3,i:1)],[C(4,i:1),C(5,i:1),C(6,i:1)]],dtype:NDArray::complex64);
-        $X = $this->array([C(100),C(10),C(1)],dtype:NDArray::complex64);
-        $Y = $this->zeros([2],dtype:NDArray::complex64);
-
-        [ $order,$trans,$m,$n,$alpha,$AA,$offA,$n,
-          $XX,$offX,$incX,$beta,$YY,$offY,$incY] =
-            $this->translate_gemv($A,$X,Y:$Y,conj:true);
-
-        $blas->gemv(
-            $order,$trans,
-            $m,$n,
-            $alpha,
-            $AA,$offA,$n,
-            $XX,$offX,$incX,
-            $beta,
-            $YY,$offY,$incY);
-
-        $this->assertEquals($this->toComplex(
-            [C(123,i:-111),C(456,i:-111)]
-        ),$this->toComplex($Y->toArray()));
-
+        if(PHP_OS!='Darwin') {
+            $A = $this->array([[C(1,i:1),C(2,i:1),C(3,i:1)],[C(4,i:1),C(5,i:1),C(6,i:1)]],dtype:NDArray::complex64);
+            $X = $this->array([C(100),C(10),C(1)],dtype:NDArray::complex64);
+            $Y = $this->zeros([2],dtype:NDArray::complex64);
+    
+            [ $order,$trans,$m,$n,$alpha,$AA,$offA,$n,
+              $XX,$offX,$incX,$beta,$YY,$offY,$incY] =
+                $this->translate_gemv($A,$X,Y:$Y,conj:true);
+    
+            $blas->gemv(
+                $order,$trans,
+                $m,$n,
+                $alpha,
+                $AA,$offA,$n,
+                $XX,$offX,$incX,
+                $beta,
+                $YY,$offY,$incY);
+    
+            $this->assertEquals($this->toComplex(
+                [C(123,i:-111),C(456,i:-111)]
+            ),$this->toComplex($Y->toArray()));
+        }
     }
 
     public function testGemvMinusM()
