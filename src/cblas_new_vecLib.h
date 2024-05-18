@@ -1,8 +1,8 @@
+#define FFI_SCOPE "Rindow\\OpenBLAS\\FFI"
+
 typedef int32_t                     __LAPACK_int;
-struct _openblas_complex_float { float real, imag; };
-struct _openblas_complex_double { double real, imag; };
-typedef struct _openblas_complex_float openblas_complex_float;
-typedef struct _openblas_complex_double openblas_complex_double;
+typedef struct _openblas_complex_float { float real, imag; } openblas_complex_float;
+typedef struct _openblas_complex_double { double real, imag; } openblas_complex_double;
 
 enum CBLAS_ORDER {CblasRowMajor=101, CblasColMajor=102 };
 enum CBLAS_TRANSPOSE {CblasNoTrans=111, CblasTrans=112, CblasConjTrans=113, AtlasConj=114};
