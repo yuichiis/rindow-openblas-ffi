@@ -81,7 +81,7 @@ jobs:
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: phpunit -c tests --filter testScalNormal
+        run: phpunit -c tests --filter BlasTest
 
         #  phpunit -c tests --filter ReleaseTest
         #  brew install openblas
