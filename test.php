@@ -33,27 +33,88 @@
 //    var_dump($v);
 //}
 
+//$loader = include __DIR__.'/vendor/autoload.php';
+//use Interop\Polite\Math\Matrix\NDArray;
+//$factory = new Rindow\OpenBLAS\FFI\OpenBLASFactory();
+//$buffer = new Rindow\Math\Buffer\FFI\BufferFactory();
+//$blas = $factory->Blas();
+//$n = 3;
+//$x = $buffer->Buffer($n,NDArray::float32);
+//$y = $buffer->Buffer($n,NDArray::float32);
+//$x[0] = 1;
+//$x[1] = 2;
+//$x[2] = 3;
+//$y[0] = 30;
+//$y[1] = 20;
+//$y[2] = 10;
+//$blas->axpy($n,1.0,$x,0,1,$y,0,1);
+//for($i=0;$i<$n;$i++) {
+//    var_dump($y[$i]);
+//}
+//
+//$lapack = $factory->Lapackb();
+//echo "lapackb loaded\n";
+
 $loader = include __DIR__.'/vendor/autoload.php';
 use Interop\Polite\Math\Matrix\NDArray;
+use Interop\Polite\Math\Matrix\BLAS;
 $factory = new Rindow\OpenBLAS\FFI\OpenBLASFactory();
 $buffer = new Rindow\Math\Buffer\FFI\BufferFactory();
-$blas = $factory->Blas();
-$n = 3;
-$x = $buffer->Buffer($n,NDArray::float32);
-$y = $buffer->Buffer($n,NDArray::float32);
-$x[0] = 1;
-$x[1] = 2;
-$x[2] = 3;
-$y[0] = 30;
-$y[1] = 20;
-$y[2] = 10;
-$blas->axpy($n,1.0,$x,0,1,$y,0,1);
-for($i=0;$i<$n;$i++) {
-    var_dump($y[$i]);
+function genNDArray(object $a, array $array)
+{
+    $stack = [];
+    $i = 0;
+    while(true) {
+        $v = array_shift($array);
+        if(is_array($v)) {
+            array_push($stack,$array);
+            $array = $v;
+            continue;
+        } elseif($v===null) {
+            $array = array_pop($stack);
+            if($array===null) {
+                break;
+            }
+            continue;
+        }
+        $a[$i] = $v;
+        $i++;
+    }
 }
 
-$lapack = $factory->Lapackb();
-echo "lapackb loaded\n";
+$blas = $factory->Blas();
+
+$order = BLAS::RowMajor;
+$trans = BLAS::Trans;
+$m = 2;
+$n = 3;
+$AA = $buffer->Buffer($m*$n,NDArray::float32);
+$XX = $buffer->Buffer($m,NDArray::float32);
+$YY = $buffer->Buffer($n,NDArray::float32);
+genNDArray($AA,[[1,2,3],[4,5,6]]);
+genNDArray($XX,[10,1]);
+genNDArray($YY,[0,0,0]);
+$alpha = 1;
+$offA = 0;
+$ldA = $n;
+$offX = 0;
+$incX = 1;
+$beta = 0;
+$offY = 0;
+$incY = 1;
+
+$blas->gemv(
+    $order,$trans,
+    $m,$n,
+    $alpha,
+    $AA,$offA,$ldA,
+    $XX,$offX,$incX,
+    $beta,
+    $YY,$offY,$incY);
+for($i=0;$i<$n;$i++) {
+    var_dump($YY[$i]);
+}
+
 
 /*
 $loader = include __DIR__.'/vendor/autoload.php';
