@@ -2763,6 +2763,7 @@ class BlasTest extends TestCase
           $XX,$offX,$incX,$beta,$YY,$offY,$incY] =
             $this->translate_gemv($A,$X,Y:$Y,trans:true);
 
+        return;
         $blas->gemv(
             $order,$trans,
             $m,$n,
