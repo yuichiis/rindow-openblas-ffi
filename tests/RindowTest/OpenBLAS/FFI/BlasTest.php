@@ -5744,41 +5744,43 @@ class BlasTest extends TestCase
         ]),$this->toComplex($B->toArray()));
 
         // complex64 check imag no_trans and conj
-        $dtype = NDArray::complex64; 
-        $A = $this->array($this->toComplex([
-            [C(1,i:6),C(2,i:5),C(3,i:4)],
-            [C(9,i:0),C(4,i:3),C(5,i:2)],
-            [C(9,i:0),C(9,i:0),C(6,i:1)],
-        ]),dtype:$dtype);
-        $B = $this->array($this->toComplex([
-            [1, 2, 3, 4],
-            [5, 6, 7, 8],
-            [9,10,11,12],
-        ]),dtype:$dtype);
-        $trans=false;
-        $conj=true;
-
-        [
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        ] = $this->translate_trmm($A,$B,trans:$trans,conj:$conj);
-
-        $blas->trmm(
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        );
-
-        $this->assertEquals($this->toComplex([
-            [C(38,i:-67),C(44,i:-82),C(50,i:-97),C(56,i:-112)],
-            [C(65,i:-33),C(74,i:-38),C(83,i:-43),C(92,i: -48)],
-            [C(54,i: -9),C(60,i:-10),C(66,i:-11),C(72,i: -12)]
-        ]),$this->toComplex($B->toArray()));
+        if(PHP_OS!='Darwin') {
+            $dtype = NDArray::complex64; 
+            $A = $this->array($this->toComplex([
+                [C(1,i:6),C(2,i:5),C(3,i:4)],
+                [C(9,i:0),C(4,i:3),C(5,i:2)],
+                [C(9,i:0),C(9,i:0),C(6,i:1)],
+            ]),dtype:$dtype);
+            $B = $this->array($this->toComplex([
+                [1, 2, 3, 4],
+                [5, 6, 7, 8],
+                [9,10,11,12],
+            ]),dtype:$dtype);
+            $trans=false;
+            $conj=true;
+    
+            [
+                $order,$side,$uplo,$trans,$diag,
+                $M,$N,
+                $alpha,
+                $AA,$offA,$lda,
+                $BB,$offB,$ldb
+            ] = $this->translate_trmm($A,$B,trans:$trans,conj:$conj);
+    
+            $blas->trmm(
+                $order,$side,$uplo,$trans,$diag,
+                $M,$N,
+                $alpha,
+                $AA,$offA,$lda,
+                $BB,$offB,$ldb
+            );
+    
+            $this->assertEquals($this->toComplex([
+                [C(38,i:-67),C(44,i:-82),C(50,i:-97),C(56,i:-112)],
+                [C(65,i:-33),C(74,i:-38),C(83,i:-43),C(92,i: -48)],
+                [C(54,i: -9),C(60,i:-10),C(66,i:-11),C(72,i: -12)]
+            ]),$this->toComplex($B->toArray()));
+        }
 
     }
 

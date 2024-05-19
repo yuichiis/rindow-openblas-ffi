@@ -1269,6 +1269,9 @@ class Blas
         if($dtype!=$B->dtype()) {
             throw new InvalidArgumentException("Unmatch data type for A and B");
         }
+        if($trans==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
+            throw new InvalidArgumentException("Unsupported dtype int Trans on MacOS: {$trans}");
+        }
 
         switch($dtype) {
             case NDArray::float32:{
