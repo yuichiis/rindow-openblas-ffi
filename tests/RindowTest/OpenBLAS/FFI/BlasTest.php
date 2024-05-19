@@ -6423,6 +6423,9 @@ class BlasTest extends TestCase
 
     }
 
+    /**
+     * @requires OS WINNT|Linux
+     */
     public function testOmatcopyNormal()
     {
         $blas = $this->getBlas();
