@@ -1511,9 +1511,6 @@ class BlasTest extends TestCase
         $dot = $blas->dot($N,$XX,$offX,$incX,$YY,$offY,$incY);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testDotu()
     {
         $blas = $this->getBlas();
@@ -1542,9 +1539,6 @@ class BlasTest extends TestCase
         $this->assertEquals(68,$dot->imag);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testDotc()
     {
         $blas = $this->getBlas();
