@@ -43,6 +43,9 @@ class Blas
 
     public function getConfig() : string
     {
+        if(PHP_OS=='Darwin') {
+            return 'vecLib';
+        }
         $string = $this->ffi->openblas_get_config();
         return FFI::string($string);
     }
