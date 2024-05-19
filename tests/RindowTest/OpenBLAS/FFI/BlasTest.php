@@ -744,9 +744,6 @@ class BlasTest extends TestCase
         $this->assertTrue(is_string($s));
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetParallel()
     {
         $blas = $this->getBlas();
