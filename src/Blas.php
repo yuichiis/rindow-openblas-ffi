@@ -237,6 +237,44 @@ class Blas
         return $result;
     }
 
+    public function dotuSub(
+        int $n,
+        BufferInterface $X, int $offsetX, int $incX,
+        BufferInterface $Y, int $offsetY, int $incY,
+        BufferInterface $R, int $offsetR,
+        ) : void
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        // Check Buffer X
+        $this->assert_vector_buffer_spec("X", $X, $n, $offsetX, $incX);
+        // Check Buffer Y
+        $this->assert_vector_buffer_spec("Y", $Y, $n, $offsetY, $incY);
+
+        // Check Buffer X and Y
+        if($X->dtype()!=$Y->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for X and Y");
+        }
+        if($X->dtype()!=$R->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for X and R");
+        }
+
+        switch($X->dtype()) {
+            case NDArray::complex64:{
+                $ffi->cblas_cdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
+                break;
+            }
+            case NDArray::complex128:{
+                $ffi->cblas_zdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+    }
+
     public function dotc(
         int $n,
         BufferInterface $X, int $offsetX, int $incX,
@@ -269,6 +307,44 @@ class Blas
             }
         }
         return $result;
+    }
+
+    public function dotcSub(
+        int $n,
+        BufferInterface $X, int $offsetX, int $incX,
+        BufferInterface $Y, int $offsetY, int $incY,
+        BufferInterface $R, int $offsetR,
+        ) : void
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        // Check Buffer X
+        $this->assert_vector_buffer_spec("X", $X, $n, $offsetX, $incX);
+        // Check Buffer Y
+        $this->assert_vector_buffer_spec("Y", $Y, $n, $offsetY, $incY);
+
+        // Check Buffer X and Y
+        if($X->dtype()!=$Y->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for X and Y");
+        }
+        if($X->dtype()!=$R->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for X and R");
+        }
+
+        switch($X->dtype()) {
+            case NDArray::complex64:{
+                $result = $ffi->cblas_cdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
+                break;
+            }
+            case NDArray::complex128:{
+                $result = $ffi->cblas_zdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
     }
 
     public function asum(
