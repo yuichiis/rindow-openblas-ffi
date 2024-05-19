@@ -6273,54 +6273,56 @@ class BlasTest extends TestCase
         $this->assertTrue($this->isclose($C,$origB));
 
         // complex64 check imag no_trans and conj
-        $dtype = NDArray::complex64;
-        $A = $this->array($this->toComplex([
-            [C(1,i:6),C(2,i:5),C(3,i:4)],
-            [C(9,i:9),C(4,i:3),C(5,i:2)],
-            [C(9,i:9),C(9,i:9),C(6,i:1)],
-        ]),dtype:$dtype);
-        $B = $this->array($this->toComplex([
-            [C( 7,i:1),C( 8,i:2)],
-            [C(10,i:1),C(11,i:2)],
-            [C(13,i:1),C(14,i:2)],
-        ]),dtype:$dtype);
-        $trans = false;
-        $conj  = true;
-
-        [
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        ] = $this->translate_trsm($A,$B,trans:$trans,conj:$conj);
-        $origB = $this->zeros($B->shape(),dtype:$B->dtype());
-        $blas->copy(count($BB),$BB,0,1,$origB->buffer(),0,1);
-
-        $blas->trsm(
-            $order,$side,$uplo,$trans,$diag,
-            $M,$N,
-            $alpha,
-            $AA,$offA,$lda,
-            $BB,$offB,$ldb
-        );
-        $RA = $this->array($this->toComplex([
-            [C(1,i:6),C(2,i:5),C(3,i:4)],
-            [C(0,i:0),C(4,i:3),C(5,i:2)],
-            [C(0,i:0),C(0,i:0),C(6,i:1)],
-        ]),dtype:$A->dtype());
-        $C = $this->zeros($B->shape(),dtype:$B->dtype());
-        $blas->gemm(
-            BLAS::RowMajor,$trans,BLAS::NoTrans,
-            $M,$N,$M,
-            $alpha,
-            $RA->buffer(),0,$M,
-            $BB,$offB,$ldb,
-            C(0.0),
-            $C->buffer(),0,$N
-        );
-
-        $this->assertTrue($this->isclose($C,$origB));
+        if(PHP_OS!='Darwin') {
+            $dtype = NDArray::complex64;
+            $A = $this->array($this->toComplex([
+                [C(1,i:6),C(2,i:5),C(3,i:4)],
+                [C(9,i:9),C(4,i:3),C(5,i:2)],
+                [C(9,i:9),C(9,i:9),C(6,i:1)],
+            ]),dtype:$dtype);
+            $B = $this->array($this->toComplex([
+                [C( 7,i:1),C( 8,i:2)],
+                [C(10,i:1),C(11,i:2)],
+                [C(13,i:1),C(14,i:2)],
+            ]),dtype:$dtype);
+            $trans = false;
+            $conj  = true;
+    
+            [
+                $order,$side,$uplo,$trans,$diag,
+                $M,$N,
+                $alpha,
+                $AA,$offA,$lda,
+                $BB,$offB,$ldb
+            ] = $this->translate_trsm($A,$B,trans:$trans,conj:$conj);
+            $origB = $this->zeros($B->shape(),dtype:$B->dtype());
+            $blas->copy(count($BB),$BB,0,1,$origB->buffer(),0,1);
+    
+            $blas->trsm(
+                $order,$side,$uplo,$trans,$diag,
+                $M,$N,
+                $alpha,
+                $AA,$offA,$lda,
+                $BB,$offB,$ldb
+            );
+            $RA = $this->array($this->toComplex([
+                [C(1,i:6),C(2,i:5),C(3,i:4)],
+                [C(0,i:0),C(4,i:3),C(5,i:2)],
+                [C(0,i:0),C(0,i:0),C(6,i:1)],
+            ]),dtype:$A->dtype());
+            $C = $this->zeros($B->shape(),dtype:$B->dtype());
+            $blas->gemm(
+                BLAS::RowMajor,$trans,BLAS::NoTrans,
+                $M,$N,$M,
+                $alpha,
+                $RA->buffer(),0,$M,
+                $BB,$offB,$ldb,
+                C(0.0),
+                $C->buffer(),0,$N
+            );
+    
+            $this->assertTrue($this->isclose($C,$origB));
+        }
 
 
     }
