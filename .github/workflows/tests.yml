@@ -13,8 +13,8 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: macOS
-            os: macos-latest
+          - name: Windows
+            os: windows-latest
             php: '8.3'
 
 ##          - name: PHP8.3
@@ -26,9 +26,9 @@ jobs:
 ##          - name: PHP8.2
 ##            os: ubuntu-latest
 ##            php: '8.2'
-##          - name: Windows
-##            os: windows-latest
-##            php: '8.3'
+##        - name: macOS
+##          os: macos-latest
+##          php: '8.3'
     
     steps:
       - name: Setup PHP ${{ matrix.php }}
@@ -45,6 +45,12 @@ jobs:
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         run: |
           sudo apt install -y libopenblas0-openmp liblapacke
+
+      - name: Install OpenBLAS (windows)
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: |
+          Invoke-WebRequest -Uri https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.27/OpenBLAS-0.3.27-x64.zip -OutFile openblas.zip
+          Expand-Archive -Path openblas.zip
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
@@ -78,6 +84,14 @@ jobs:
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         run: phpunit -c tests
+
+      - name: PHPUnit Tests
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: |
+          $currentDir = (Get-Location).Path
+          $OpenBLAS_DIR = Join-Path -Path $currentDir -ChildPath 'openblas'
+          $env:PATH = "$OpenBLAS_DIR/bin;$env:PATH"
+          phpunit -c tests
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
