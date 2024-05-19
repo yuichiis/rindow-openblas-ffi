@@ -1166,9 +1166,6 @@ class BlasTest extends TestCase
         $this->assertEquals(32,$dot);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testDotuNormal()
     {
         $blas = $this->getBlas();
