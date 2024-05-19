@@ -1253,7 +1253,7 @@ class BlasTest extends TestCase
 
         $dot = $blas->dotc($N,$XX,$offX,$incX,$YY,$offY,$incY);
         $this->assertEquals($this->toComplex(32),$this->toComplex($dot));
-return;
+
         // complex128
         $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex128);
         $Y = $this->array([C(4),C(5),C(6)],dtype:NDArray::complex128);
@@ -1262,7 +1262,7 @@ return;
 
         $dot = $blas->dotc($N,$XX,$offX,$incX,$YY,$offY,$incY);
         $this->assertEquals($this->toComplex(32),$this->toComplex($dot));
-
+return;
         // complex64
         $X = $this->array([C(1,i:1),C(2,i:1),C(3,i:1)],dtype:NDArray::complex64);
         $Y = $this->array([C(4),C(5),C(6)],dtype:NDArray::complex64);
