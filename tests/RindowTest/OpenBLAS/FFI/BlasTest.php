@@ -725,9 +725,6 @@ class BlasTest extends TestCase
         $this->assertGreaterThan(0,$n);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetConfig()
     {
         $blas = $this->getBlas();
@@ -740,9 +737,6 @@ class BlasTest extends TestCase
         );
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetCorename()
     {
         $blas = $this->getBlas();
