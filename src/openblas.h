@@ -89,8 +89,8 @@ openblas_complex_float  cblas_cdotc(const blasint n, const void  *x, const blasi
 openblas_complex_double cblas_zdotu(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy);
 openblas_complex_double cblas_zdotc(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy);
 
-void  cblas_cdotu_sub(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy, void  *ret);
-void  cblas_cdotc_sub(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy, void  *ret);
+void  cblas_cdotu_sub(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy, void *ret);
+void  cblas_cdotc_sub(const blasint n, const void  *x, const blasint incx, const void  *y, const blasint incy, void *ret);
 void  cblas_zdotu_sub(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy, void *ret);
 void  cblas_zdotc_sub(const blasint n, const void *x, const blasint incx, const void *y, const blasint incy, void *ret);
 

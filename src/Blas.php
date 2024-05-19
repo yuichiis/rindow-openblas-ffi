@@ -266,6 +266,7 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
+                $ret = $ffi->new('double[2]');
                 $ffi->cblas_zdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
                 break;
             }
@@ -334,11 +335,11 @@ class Blas
 
         switch($X->dtype()) {
             case NDArray::complex64:{
-                $result = $ffi->cblas_cdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
+                $result = $ffi->cblas_cdotc_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
                 break;
             }
             case NDArray::complex128:{
-                $result = $ffi->cblas_zdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
+                $result = $ffi->cblas_zdotc_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$R->addr($offsetR));
                 break;
             }
             default: {

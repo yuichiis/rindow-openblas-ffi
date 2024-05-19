@@ -1226,7 +1226,7 @@ class BlasTest extends TestCase
         $offR = 0;
 
         $blas->dotuSub($N,$XX,$offX,$incX,$YY,$offY,$incY,$RR,$offR);
-        $this->assertEquals($this->toComplex(32),$this->toComplex($dot));
+        $this->assertEquals($this->toComplex(32),$this->toComplex($dot[0]));
 
         // complex128
         $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex128);
@@ -1238,7 +1238,7 @@ class BlasTest extends TestCase
         $offR = 0;
 
         $blas->dotuSub($N,$XX,$offX,$incX,$YY,$offY,$incY,$RR,$offR);
-        $this->assertEquals($this->toComplex(32),$this->toComplex($dot));
+        $this->assertEquals($this->toComplex(32),$this->toComplex($dot[0]));
 
         // complex64
         $X = $this->array([C(1,i:1),C(2,i:1),C(3,i:1)],dtype:NDArray::complex64);
@@ -1250,7 +1250,7 @@ class BlasTest extends TestCase
         $offR = 0;
 
         $blas->dotuSub($N,$XX,$offX,$incX,$YY,$offY,$incY,$RR,$offR);
-        $this->assertEquals(C(32,i:15),$this->toComplex($dot));
+        $this->assertEquals(C(32,i:15),$this->toComplex($dot[0]));
 
     }
 
@@ -1284,6 +1284,48 @@ class BlasTest extends TestCase
 
         $dot = $blas->dotc($N,$XX,$offX,$incX,$YY,$offY,$incY);
         $this->assertEquals(C(32,i:-15),$this->toComplex($dot));
+
+    }
+
+    public function testDotcSubNormal()
+    {
+        $blas = $this->getBlas();
+
+        // complex64
+        $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex64);
+        $Y = $this->array([C(4),C(5),C(6)],dtype:NDArray::complex64);
+        $dot = $this->array([C(0)],dtype:NDArray::complex64);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_dot($X,$Y);
+        $RR = $dot->buffer();
+        $offR = 0;
+
+        $blas->dotcSub($N,$XX,$offX,$incX,$YY,$offY,$incY,$RR,$offR);
+        $this->assertEquals($this->toComplex(32),$this->toComplex($dot[0]));
+
+        // complex128
+        $X = $this->array([C(1),C(2),C(3)],dtype:NDArray::complex128);
+        $Y = $this->array([C(4),C(5),C(6)],dtype:NDArray::complex128);
+        $dot = $this->array([C(0)],dtype:NDArray::complex128);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_dot($X,$Y);
+        $RR = $dot->buffer();
+        $offR = 0;
+
+        $blas->dotcSub($N,$XX,$offX,$incX,$YY,$offY,$incY,$RR,$offR);
+        $this->assertEquals($this->toComplex(32),$this->toComplex($dot[0]));
+
+        // complex64
+        $X = $this->array([C(1,i:1),C(2,i:1),C(3,i:1)],dtype:NDArray::complex64);
+        $Y = $this->array([C(4),C(5),C(6)],dtype:NDArray::complex64);
+        $dot = $this->array([C(0)],dtype:NDArray::complex64);
+        [$N,$XX,$offX,$incX,$YY,$offY,$incY] =
+            $this->translate_dot($X,$Y);
+        $RR = $dot->buffer();
+        $offR = 0;
+
+        $blas->dotcSub($N,$XX,$offX,$incX,$YY,$offY,$incY,$RR,$offR);
+        $this->assertEquals(C(32,i:-15),$this->toComplex($dot[0]));
 
     }
 
