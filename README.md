@@ -21,8 +21,8 @@ Requirements
 ============
 
 - PHP 8.1 or PHP8.2 or PHP8.3
-- Windows or Linux(Ubuntu 20.04 or Debian 12 or later)
-- OpenBLAS
+- Windows or Linux(Ubuntu 20.04 or Debian 12 or later) or MacOS
+- OpenBLAS or vecLib(MacOS)
 
 How to download and setup
 =========================
