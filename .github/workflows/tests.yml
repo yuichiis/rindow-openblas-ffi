@@ -92,6 +92,5 @@ jobs:
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: php test.php
+        run: phpunit -c tests
 
-      #  run: phpunit -c tests
