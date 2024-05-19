@@ -1241,9 +1241,6 @@ class BlasTest extends TestCase
 
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testDotcNormal()
     {
         $blas = $this->getBlas();
