@@ -711,9 +711,6 @@ class BlasTest extends TestCase
         ];
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetNumThreads()
     {
         $blas = $this->getBlas();
@@ -721,9 +718,6 @@ class BlasTest extends TestCase
         $this->assertGreaterThan(0,$n);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetNumProcs()
     {
         $blas = $this->getBlas();
@@ -731,9 +725,6 @@ class BlasTest extends TestCase
         $this->assertGreaterThan(0,$n);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetConfig()
     {
         $blas = $this->getBlas();
@@ -741,12 +732,11 @@ class BlasTest extends TestCase
 
         $this->assertTrue(
             strpos($s,'OpenBLAS')===0 ||
-            strpos($s,'NO_LAPACKE')===0);
+            strpos($s,'NO_LAPACKE')===0||
+            strpos($s,'vecLib')===0
+        );
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetCorename()
     {
         $blas = $this->getBlas();
@@ -754,9 +744,6 @@ class BlasTest extends TestCase
         $this->assertTrue(is_string($s));
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testGetParallel()
     {
         $blas = $this->getBlas();
@@ -1179,9 +1166,6 @@ class BlasTest extends TestCase
         $this->assertEquals(32,$dot);
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testDotuNormal()
     {
         $blas = $this->getBlas();
@@ -1257,9 +1241,6 @@ class BlasTest extends TestCase
 
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
     public function testDotcNormal()
     {
         $blas = $this->getBlas();

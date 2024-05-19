@@ -15,7 +15,7 @@ class ffi_char_t2
     public string $cdata;
 }
 
-class Lapackb
+class Lapackb implements Lapack
 {
     use Utils;
 

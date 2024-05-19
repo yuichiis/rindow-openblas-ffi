@@ -182,13 +182,16 @@ class OpenBLASFactory
 
     public function Lapack() : Lapack
     {
+        if(PHP_OS=='Darwin') {
+            return $this->Lapackb();
+        }
         if(self::$ffiLapacke==null) {
             throw new RuntimeException('lapacke library not loaded.');
         }
-        return new Lapack(self::$ffiLapacke);
+        return new Lapacke(self::$ffiLapacke);
     }
 
-    public function Lapackb() : Lapackb
+    public function Lapackb() : Lapack
     {
         if(self::$ffiLapack==null) {
             throw new RuntimeException('lapack library not loaded.');
