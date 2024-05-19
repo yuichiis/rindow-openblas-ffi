@@ -33,17 +33,23 @@ class Blas
 
     public function getNumThreads() : int
     {
+        if($this->isVecib()) {
+            return 1;
+        }
         return $this->ffi->openblas_get_num_threads();
     }
 
     public function getNumProcs() : int
     {
+        if($this->isVecib()) {
+            return 1;
+        }
         return $this->ffi->openblas_get_num_procs();
     }
 
     public function getConfig() : string
     {
-        if(PHP_OS=='Darwin') {
+        if($this->isVecib()) {
             return 'vecLib';
         }
         $string = $this->ffi->openblas_get_config();
@@ -52,13 +58,34 @@ class Blas
 
     public function getCorename() : string
     {
+        if($this->isVecib()) {
+            return 'vecLib';
+        }
         $string = $this->ffi->openblas_get_corename();
         return FFI::string($string);
     }
 
     public function getParallel() : int
     {
+        if($this->isVecib()) {
+            return self::OPENBLAS_THREAD;
+        }
         return $this->ffi->openblas_get_parallel();
+    }
+
+    public function hasIamin() : bool
+    {
+        return !$this->isVecib();
+    }
+
+    public function hasOmatcopy() : bool
+    {
+        return !$this->isVecib();
+    }
+
+    private function isVecib(): bool
+    {
+        return PHP_OS==='Darwin';
     }
 
     protected function toComplex(object $from,int $dtype) : object
@@ -226,10 +253,18 @@ class Blas
 
         switch($X->dtype()) {
             case NDArray::complex64:{
+                if($this->isVecib()) {
+                    $result = $ffi->new('openblas_complex_float');
+                    $ffi->cblas_cdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$ffi->addr($result));
+                }
                 $result = $ffi->cblas_cdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             case NDArray::complex128:{
+                if($this->isVecib()) {
+                    $result = $ffi->new('openblas_complex_double');
+                    $ffi->cblas_zdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$ffi->addr($result));
+                }
                 $result = $ffi->cblas_zdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
@@ -299,10 +334,18 @@ class Blas
 
         switch($X->dtype()) {
             case NDArray::complex64:{
+                if($this->isVecib()) {
+                    $result = $ffi->new('openblas_complex_float');
+                    $ffi->cblas_cdotc_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$ffi->addr($result));
+                }
                 $result = $ffi->cblas_cdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             case NDArray::complex128:{
+                if($this->isVecib()) {
+                    $result = $ffi->new('openblas_complex_double');
+                    $ffi->cblas_zdotc_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$ffi->addr($result));
+                }
                 $result = $ffi->cblas_zdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
@@ -425,6 +468,9 @@ class Blas
         int $n,
         BufferInterface $X, int $offsetX, int $incX ) : int
     {
+        if($this->isVecib()) {
+            throw new InvalidArgumentException("iamin is not supported on macOS.");
+        }
         $ffi= $this->ffi;
 
         $this->assert_shape_parameter("n", $n);
@@ -822,7 +868,7 @@ class Blas
         if($dtype!=$X->dtype() || $dtype!=$Y->dtype()) {
             throw new InvalidArgumentException("Unmatch data type for A and X and Y");
         }
-        if($trans==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
+        if($trans==BLASIF::ConjNoTrans && $this->isVecib()) {
             throw new InvalidArgumentException("Unsupported dtype on MacOS: {$trans}");
         }
 
@@ -933,10 +979,10 @@ class Blas
         if($dtype!=$B->dtype() || $dtype!=$C->dtype()) {
             throw new InvalidArgumentException("Unmatch data type for A and B and C");
         }
-        if($transA==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
+        if($transA==BLASIF::ConjNoTrans && $this->isVecib()) {
             throw new InvalidArgumentException("Unsupported dtype int TransA on MacOS: {$transA}");
         }
-        if($transB==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
+        if($transB==BLASIF::ConjNoTrans && $this->isVecib()) {
             throw new InvalidArgumentException("Unsupported dtype int TransB on MacOS: {$transB}");
         }
 
@@ -1349,7 +1395,7 @@ class Blas
         if($dtype!=$B->dtype()) {
             throw new InvalidArgumentException("Unmatch data type for A and B");
         }
-        if($trans==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
+        if($trans==BLASIF::ConjNoTrans && $this->isVecib()) {
             throw new InvalidArgumentException("Unsupported dtype int Trans on MacOS: {$trans}");
         }
 
@@ -1450,7 +1496,7 @@ class Blas
         if($dtype!=$B->dtype()) {
             throw new InvalidArgumentException("Unmatch data type for A and B");
         }
-        if($trans==BLASIF::ConjNoTrans && PHP_OS=='Darwin') {
+        if($trans==BLASIF::ConjNoTrans && $this->isVecib()) {
             throw new InvalidArgumentException("Unsupported dtype int Trans on MacOS: {$trans}");
         }
 
@@ -1527,6 +1573,9 @@ class Blas
         BufferInterface $B, int $offsetB, int $ldB,
     ) : void
     {
+        if($this->isVecib()) {
+            throw new InvalidArgumentException("omatcopy is not supported on macOS.");
+        }
         $ffi = $this->ffi;
         $this->assert_shape_parameter("m", $m);
         $this->assert_shape_parameter("n", $n);
