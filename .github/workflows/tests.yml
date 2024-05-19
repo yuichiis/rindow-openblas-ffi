@@ -51,6 +51,7 @@ jobs:
         run: |
           Invoke-WebRequest -Uri https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.27/OpenBLAS-0.3.27-x64.zip -OutFile openblas.zip
           Expand-Archive -Path openblas.zip
+          dir $OpenBLAS_DIR/bin
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
