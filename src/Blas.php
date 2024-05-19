@@ -256,16 +256,18 @@ class Blas
                 if($this->isVecib()) {
                     $result = $ffi->new('openblas_complex_float');
                     $ffi->cblas_cdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,FFI::addr($result));
+                } else {
+                    $result = $ffi->cblas_cdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 }
-                $result = $ffi->cblas_cdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             case NDArray::complex128:{
                 if($this->isVecib()) {
                     $result = $ffi->new('openblas_complex_double');
                     $ffi->cblas_zdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,FFI::addr($result));
+                } else {
+                    $result = $ffi->cblas_zdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 }
-                $result = $ffi->cblas_zdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             default: {
@@ -337,16 +339,18 @@ class Blas
                 if($this->isVecib()) {
                     $result = $ffi->new('openblas_complex_float');
                     $ffi->cblas_cdotc_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,FFI::addr($result));
+                } else {
+                    $result = $ffi->cblas_cdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 }
-                $result = $ffi->cblas_cdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             case NDArray::complex128:{
                 if($this->isVecib()) {
                     $result = $ffi->new('openblas_complex_double');
                     $ffi->cblas_zdotc_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,FFI::addr($result));
+                } else {
+                    $result = $ffi->cblas_zdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 }
-                $result = $ffi->cblas_zdotc($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             default: {
