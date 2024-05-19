@@ -91,6 +91,7 @@ jobs:
           $currentDir = (Get-Location).Path
           $OpenBLAS_DIR = Join-Path -Path $currentDir -ChildPath 'openblas'
           $env:PATH = "$OpenBLAS_DIR/bin;$env:PATH"
+          dir $OpenBLAS_DIR/bin
           phpunit -c tests
 
       - name: PHPUnit Tests
