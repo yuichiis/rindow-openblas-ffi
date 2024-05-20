@@ -255,8 +255,7 @@ class Blas
             case NDArray::complex64:{
                 if($this->isVecib()) {
                     $result = $ffi->new('openblas_complex_float');
-                    $result_p = FFI::addr($result);
-                    $ffi->cblas_cdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$result_p);
+                    $ffi->cblas_cdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,FFI::addr($result));
                 } else {
                     $result = $ffi->cblas_cdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 }
@@ -265,8 +264,7 @@ class Blas
             case NDArray::complex128:{
                 if($this->isVecib()) {
                     $result = $ffi->new('openblas_complex_double');
-                    $result_p = FFI::addr($result);
-                    $ffi->cblas_zdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,$result_p);
+                    $ffi->cblas_zdotu_sub($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY,FFI::addr($result));
                 } else {
                     $result = $ffi->cblas_zdotu($n,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 }
