@@ -68,10 +68,10 @@ class OpenBLASFactory
      * @param array<string> $lapackeLibs
      */
     public function __construct(
-        string $headerFile=null,
-        array $libFiles=null,
-        string $lapackeHeader=null,
-        array $lapackeLibs=null,
+        ?string $headerFile=null,
+        ?array $libFiles=null,
+        ?string $lapackeHeader=null,
+        ?array $lapackeLibs=null,
         )
     {
         if(self::$ffi!==null) {
