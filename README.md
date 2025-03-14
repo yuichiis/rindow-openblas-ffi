@@ -21,7 +21,6 @@ Requirements
 ============
 
 - PHP 8.1 or PHP8.2 or PHP8.3 or PHP8.4
-- Windows or Linux
 - OpenBLAS
 
 How to download and setup
