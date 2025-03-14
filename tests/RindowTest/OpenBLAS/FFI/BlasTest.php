@@ -2,6 +2,9 @@
 namespace RindowTest\OpenBLAS\FFI\BlasTest;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
+
 use Interop\Polite\Math\Matrix\NDArray;
 use Interop\Polite\Math\Matrix\BLAS;
 use Rindow\Math\Matrix\MatrixOperator;
@@ -2539,9 +2542,7 @@ class BlasTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider providerDtypesFloats
-     */
+    #[DataProvider('providerDtypesFloats')]
     public function testRotmgNormal($params)
     {
         extract($params);
@@ -2609,9 +2610,7 @@ class BlasTest extends TestCase
         }
     }
    
-    /**
-     * @dataProvider providerDtypesFloats
-     */
+    #[DataProvider('providerDtypesFloats')]
     public function testRotmNormal($params)
     {
         extract($params);
@@ -6497,9 +6496,7 @@ class BlasTest extends TestCase
 
     }
 
-    /**
-     * @requires OS WINNT|Linux
-     */
+    #[RequiresOperatingSystem('WINNT|Linux')]
     public function testOmatcopyNormal()
     {
         $blas = $this->getBlas();

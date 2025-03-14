@@ -444,7 +444,7 @@ trait Utils
         return $abs;
     }
 
-    protected function copy(NDArray $x,NDArray $y=null) : NDArray
+    protected function copy(NDArray $x,?NDArray $y=null) : NDArray
     {
         $blas = $this->getBlas();
 

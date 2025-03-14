@@ -2,6 +2,7 @@
 namespace RindowTest\OpenBLAS\FFI\LapackbTest;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Interop\Polite\Math\Matrix\NDArray;
 use Interop\Polite\Math\Matrix\BLAS;
 use Interop\Polite\Math\Matrix\Buffer as BufferInterface;
@@ -105,9 +106,7 @@ class LapackbTest extends TestCase
         ];
     }
 
-    /**
-    * @dataProvider providerDtypesFloats
-    */
+    #[DataProvider('providerDtypesFloats')]
     public function testSvdFull1($params)
     {
         extract($params);
