@@ -16,21 +16,27 @@ jobs:
           - name: PHP8.1
             os: ubuntu-latest
             php: '8.1'
-          - name: PHP8.2
-            os: ubuntu-latest
-            php: '8.2'
+            phpunit: '10.5'
           - name: PHP8.3
             os: ubuntu-latest
             php: '8.3'
+            phpunit: '11.5'
+          - name: PHP8.4
+            os: ubuntu-latest
+            php: '8.4'
+            phpunit: '11.5'
           - name: Windows
             os: windows-latest
-            php: '8.3'
-          - name: macOS
-            os: macos-latest
-            php: '8.3'
-          - name: macOS-x86_64
-            os: macos-13
-            php: '8.3'
+            php: '8.4'
+            phpunit: '11.5'
+#          - name: macOS
+#            os: macos-latest
+#            php: '8.4'
+#            phpunit: '11.5'
+#          - name: macOS-x86_64
+#            os: macos-13
+#            php: '8.4'
+#            phpunit: '11.5'
 
 
     steps:
@@ -40,14 +46,14 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:10.5, phpstan
+          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
           #ini-values: "memory_limit=512M"
           extensions: ffi
 
       - name: Install OpenBLAS
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         run: |
-          sudo apt install -y libopenblas0-openmp liblapacke
+          sudo apt install -y libopenblas0 liblapacke
 
       - name: Checkout codes
         uses: "actions/checkout@v4"
@@ -74,7 +80,7 @@ jobs:
       #  uses: php-actions/phpunit@v3
       #  with:
       #    configuration: tests/phpunit.xml
-      #    version: 10.5
+      #    version: ${{ matrix.phpunit }}
       #    php_version: ${{ matrix.php }}
       #    filter: ReleaseTest
 

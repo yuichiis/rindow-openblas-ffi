@@ -10,8 +10,8 @@ use Rindow\Math\Buffer\FFI\Buffer;
 use Rindow\OpenBLAS\FFI\OpenBLASFactory;
 
 function C(
-    float $r=null,
-    float $i=null,
+    ?float $r=null,
+    ?float $i=null,
 ) : object
 {
     $r = $r ?? 0.0;
@@ -60,7 +60,7 @@ trait Utils
     }
 
     public function translate_axpy(
-        NDArray $X,NDArray $Y, float|object $alpha=null) : array
+        NDArray $X,NDArray $Y, float|object|null $alpha=null) : array
     {
         if($X->shape()!=$Y->shape()) {
             $shapeError = '('.implode(',',$X->shape()).'),('.implode(',',$Y->shape()).')';
@@ -96,7 +96,7 @@ trait Utils
         return true;
     }
 
-    public function array(mixed $array=null, int $dtype=null, array $shape=null) : object
+    public function array(mixed $array=null, ?int $dtype=null, ?array $shape=null) : object
     {
         $ndarray = new class ($array, $dtype, $shape) implements NDArray {
             protected object $buffer;
@@ -104,7 +104,7 @@ trait Utils
             protected int $dtype;
             protected int $offset;
             protected array $shape;
-            public function __construct(mixed $array=null, int $dtype=null, array $shape=null,int $offset=null) {
+            public function __construct(mixed $array=null, ?int $dtype=null, ?array $shape=null,?int $offset=null) {
                 $dtype = $dtype ?? NDArray::float32;
                 if($array===null && $shape!==null) {
                     $this->checkShape($shape);
@@ -161,7 +161,7 @@ trait Utils
                 return new Buffer($size,$dtype);
             }
             
-            protected function isComplex($dtype=null) : bool
+            protected function isComplex(?int $dtype=null) : bool
             {
                 $dtype = $dtype ?? $this->_dtype;
                 return $dtype==NDArray::complex64||$dtype==NDArray::complex128;
@@ -355,19 +355,19 @@ trait Utils
         return $ndarray;
     }
 
-    public function alloc(array $shape,int $dtype=null)
+    public function alloc(array $shape,?int $dtype=null)
     {
         $ndarray = $this->array(null,$dtype,$shape);
         return $ndarray;
     }
 
-    public function zeros(array $shape,int $dtype=null)
+    public function zeros(array $shape,?int $dtype=null)
     {
         $ndarray = $this->array(null,$dtype,$shape);
         return $ndarray;
     }
 
-    public function ones(array $shape, int $dtype=null)
+    public function ones(array $shape, ?int $dtype=null)
     {
         $ndarray = $this->array(null,$dtype,$shape);
         $buffer = $ndarray->buffer();
@@ -383,7 +383,7 @@ trait Utils
         return $ndarray;
     }
 
-    public function full(array $shape, mixed $value ,int $dtype=null)
+    public function full(array $shape, mixed $value ,?int $dtype=null)
     {
         $ndarray = $this->array(null,$dtype,$shape);
         $buffer = $ndarray->buffer();
@@ -444,7 +444,7 @@ trait Utils
         return $abs;
     }
 
-    protected function copy(NDArray $x,NDArray $y=null) : NDArray
+    protected function copy(NDArray $x,?NDArray $y=null) : NDArray
     {
         $blas = $this->getBlas();
 
@@ -455,7 +455,7 @@ trait Utils
         return $y;
     }
 
-    protected function isclose(NDArray $a, NDArray $b, $rtol=null, $atol=null) : bool
+    protected function isclose(NDArray $a, NDArray $b, ?float $rtol=null, ?float $atol=null) : bool
     {
         $blas = $this->getBlas();
 
@@ -486,8 +486,8 @@ trait Utils
 
     public function arrayToString(
         NDArray $array,
-        string $format=null,
-        bool|int $indent=null) : string
+        ?string $format=null,
+        bool|int|null $indent=null) : string
     {
         $shape = $array->shape();
         if(count($shape)==0) {

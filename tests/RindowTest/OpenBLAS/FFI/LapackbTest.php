@@ -2,6 +2,7 @@
 namespace RindowTest\OpenBLAS\FFI\LapackbTest;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Interop\Polite\Math\Matrix\NDArray;
 use Interop\Polite\Math\Matrix\BLAS;
 use Interop\Polite\Math\Matrix\Buffer as BufferInterface;
@@ -33,7 +34,7 @@ class LapackbTest extends TestCase
         return $lapack;
     }
 
-    public function translate_gesvd(NDArray $matrix,bool $fullMatrices=null)
+    public function translate_gesvd(NDArray $matrix,?bool $fullMatrices=null)
     {
         if($matrix->ndim()!=2) {
             throw new InvalidArgumentException("input array must be 2D array");
@@ -105,9 +106,7 @@ class LapackbTest extends TestCase
         ];
     }
 
-    /**
-    * @dataProvider providerDtypesFloats
-    */
+    #[DataProvider('providerDtypesFloats')]
     public function testSvdFull1($params)
     {
         extract($params);
