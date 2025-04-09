@@ -60,36 +60,16 @@ jobs:
       - name: Checkout codes
         uses: "actions/checkout@v4"
 
-      #- name: Composer
-      #  uses: php-actions/composer@v6
-      #  with:
-      #    php_version: ${{ matrix.php }}
-      #    php_extensions: ffi
-
       - name: Composer
         run: |
           composer update
           composer require --dev phpunit/phpunit=^${{ matrix.phpunit }}
 
-      #- name: PHP Static Analysys
-      #  uses: php-actions/phpstan@v3
-      #  with:
-      #    php_version: ${{ matrix.php }}
-      #    path: src/
-
       - name: PHP Static Analysys
         run: phpstan
 
-      #- name: PHPUnit Tests
-      #  uses: php-actions/phpunit@v3
-      #  with:
-      #    configuration: tests/phpunit.xml
-      #    version: ${{ matrix.phpunit }}
-      #    php_version: ${{ matrix.php }}
-      #    filter: ReleaseTest
-
       - name: PHPUnit Tests
-        if: ${{ startsWith(matrix.os, 'ubuntu-') }}
+        if: ${{ !startsWith(matrix.os, 'windows-') }}
         run: vendor/bin/phpunit -c tests
 
       - name: PHPUnit Tests
@@ -102,8 +82,3 @@ jobs:
           $env:PATH = "$OpenBLAS_DIR/bin;$env:PATH"
           dir $OpenBLAS_DIR/bin
           vendor/bin/phpunit -c tests
-
-      - name: PHPUnit Tests
-        if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: vendor/bin/phpunit -c tests
-
