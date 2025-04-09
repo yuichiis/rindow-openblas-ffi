@@ -29,14 +29,14 @@ jobs:
             os: windows-latest
             php: '8.4'
             phpunit: '11.5'
-#          - name: macOS
-#            os: macos-latest
-#            php: '8.4'
-#            phpunit: '11.5'
-#          - name: macOS-x86_64
-#            os: macos-13
-#            php: '8.4'
-#            phpunit: '11.5'
+          - name: macOS
+            os: macos-latest
+            php: '8.4'
+            phpunit: '11.5'
+          - name: macOS-x86_64
+            os: macos-13
+            php: '8.4'
+            phpunit: '11.5'
 
 
     steps:
@@ -46,9 +46,11 @@ jobs:
           php-version: ${{ matrix.php }}
           # PHP Extras
           coverage: none
-          tools: composer, phpunit:${{ matrix.phpunit }}, phpstan
+          tools: composer, phpstan
           #ini-values: "memory_limit=512M"
-          extensions: ffi
+          extensions: ffi,mbstring
+        env:
+          fail-fast: true
 
       - name: Install OpenBLAS
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
@@ -65,7 +67,9 @@ jobs:
       #    php_extensions: ffi
 
       - name: Composer
-        run: composer update
+        run: |
+          composer update
+          composer require --dev phpunit/phpunit=^${{ matrix.phpunit }}
 
       #- name: PHP Static Analysys
       #  uses: php-actions/phpstan@v3
@@ -86,7 +90,7 @@ jobs:
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
-        run: phpunit -c tests
+        run: vendor/bin/phpunit -c tests
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'windows-') }}
@@ -97,9 +101,9 @@ jobs:
           $OpenBLAS_DIR = Join-Path -Path $currentDir -ChildPath 'openblas'
           $env:PATH = "$OpenBLAS_DIR/bin;$env:PATH"
           dir $OpenBLAS_DIR/bin
-          phpunit -c tests
+          vendor/bin/phpunit -c tests
 
       - name: PHPUnit Tests
         if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: phpunit -c tests
+        run: vendor/bin/phpunit -c tests
 
