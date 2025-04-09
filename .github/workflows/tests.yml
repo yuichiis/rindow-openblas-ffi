@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      #fail-fast: true
+      fail-fast: true
       matrix:
         include:
           - name: PHP8.1
