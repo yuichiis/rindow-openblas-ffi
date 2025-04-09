@@ -20,8 +20,9 @@ Very useful when you want to do deep learning with PHP!
 Requirements
 ============
 
-- PHP 8.1 or PHP8.2 or PHP8.3 or PHP8.4
-- OpenBLAS 0.3.8 or later
+- PHP 8.1, PHP8.2, PHP8.3, PHP8.4
+- Linux, Windows, macOS
+- OpenBLAS 0.3.8 or later(Linux/Windows), vecLib(macOS)
 
 How to download and setup
 =========================
@@ -58,6 +59,13 @@ $ cd \your\app\dir
 $ composer require rindow/rindow-openblas-ffi
 ```
 
+### macOS
+Set it up using composer.
+```shell
+$ mkdir \your\app\dir
+$ cd \your\app\dir
+$ composer require rindow/rindow-openblas-ffi
+```
 
 ### Troubleshooting for Linux
 Since rindow-matlib currently uses ptheads, so you should choose the pthread version for OpenBLAS as well.
