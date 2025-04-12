@@ -976,6 +976,9 @@ class Blas
 
         // Check Buffer C
         $this->assert_matrix_buffer_spec("C", $C, $m, $n, $offsetC, $ldC);
+        if($ldC<$n) {
+            throw new \Exception("ldC<n: ldC=$ldC, n=$n");
+        }
 
 
         // Check Buffer A and B and C
