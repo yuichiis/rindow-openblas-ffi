@@ -469,7 +469,11 @@ trait Utils
         return $y;
     }
 
-    protected function isclose(NDArray $a, NDArray $b, ?float $rtol=null, ?float $atol=null) : bool
+    protected function isclose(
+        NDArray $a, NDArray $b,
+        ?float $rtol=null, ?float $atol=null,
+        ?bool $debug=null
+        ) : bool
     {
         $blas = $this->getBlas();
 
@@ -495,6 +499,9 @@ trait Utils
         $blas->scal(...$this->translate_scal($rtol,$scalB));
         $iCloseMax = $blas->iamax(...$this->translate_amin($scalB));
         $close = $atol+$this->abs($scalB->buffer()[$iCloseMax]);
+        if($debug) {
+            echo "diff=".sprintf('%14.8e',$diff).", close=".sprintf('%14.8e',$close)."\n";
+        }
         return $diff < $close;
     }
 
