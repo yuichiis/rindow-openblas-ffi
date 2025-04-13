@@ -493,6 +493,7 @@ trait Utils
         $blas->axpy(...$this->translate_axpy($a,$diffs,$alpha));
         $iDiffMax = $blas->iamax(...$this->translate_amin($diffs));
         if($debug) {
+            echo "diffs=".$this->arrayToString($diffs,'%10.6f',true)."\n";
             echo "iDiffMax=$iDiffMax\n";
         }
         $diff = $this->abs($diffs->buffer()[$iDiffMax]);
