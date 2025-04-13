@@ -96,9 +96,9 @@ trait Utils
         return true;
     }
 
-    public function array(mixed $array=null, ?int $dtype=null, ?array $shape=null) : object
+    public function array(mixed $array=null, ?int $dtype=null, ?array $shape=null,?int $offset=null) : object
     {
-        $ndarray = new class ($array, $dtype, $shape) implements NDArray {
+        $ndarray = new class ($array, $dtype, $shape, $offset) implements NDArray {
             protected object $buffer;
             protected int $size;
             protected int $dtype;
@@ -271,7 +271,7 @@ trait Utils
         
             public function offset() : int { return $this->offset; }
         
-            public function size() : int { return $this->buffer->count(); }
+            public function size() : int { return array_product($this->shape); }
         
             public function reshape(array $shape) : NDArray
             {
@@ -347,10 +347,10 @@ trait Utils
                 return $new;
             }
         
-            public function offsetSet( $offset , $value ) : void { throw new \Excpetion('not implement'); }
-            public function offsetUnset( $offset ) : void { throw new \Excpetion('not implement'); }
-            public function count() : int  { throw new \Excpetion('not implement'); }
-            public function  getIterator() : Traversable  { throw new \Excpetion('not implement'); }
+            public function offsetSet( $offset , $value ) : void { throw new \Exception('not implement'); }
+            public function offsetUnset( $offset ) : void { throw new \Exception('not implement'); }
+            public function count() : int  { throw new \Exception('not implement'); }
+            public function  getIterator() : Traversable  { throw new \Exception('not implement'); }
         };
         return $ndarray;
     }
@@ -452,6 +452,20 @@ trait Utils
             $y = $this->zeros($x->shape(),dtype:$x->dtype());
         }
         $blas->copy(...$this->translate_copy($x,$y));
+        return $y;
+    }
+
+    protected function transpose(NDArray $x) : NDArray
+    {
+        [$rows,$cols] = $x->shape();
+        $y = $this->alloc([$cols,$rows],dtype:$x->dtype());
+        $xx = $x->buffer();
+        $yy = $y->buffer();
+        for($i=0;$i<$rows;$i++) {
+            for($j=0;$j<$cols;$j++) {
+                $yy[$j*$rows+$i] = $xx[$i*$cols+$j];
+            }
+        }
         return $y;
     }
 
