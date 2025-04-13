@@ -276,6 +276,8 @@ class LapackbTest extends TestCase
         $correctU = $this->transpose($correctU);
         $this->assertEquals([5,5],$correctU->shape());
 
+        echo $this->arrayToString($u,'%10.6f',true)."\n";
+        echo $this->arrayToString($correctU,'%10.6f',true)."\n";
         $this->assertTrue($this->isclose($u,$correctU,rtol:1e-2,atol:1e-3));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($u,$correctU,-1))));
         # ---- s ----
