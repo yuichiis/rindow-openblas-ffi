@@ -977,6 +977,7 @@ class Blas
         // Check Buffer C
         $this->assert_matrix_buffer_spec("C", $C, $m, $n, $offsetC, $ldC);
 
+
         // Check Buffer A and B and C
         $dtype = $A->dtype();
         if($dtype!=$B->dtype() || $dtype!=$C->dtype()) {
