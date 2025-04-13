@@ -461,15 +461,33 @@ trait Utils
         $y = $this->alloc([$cols,$rows],dtype:$x->dtype());
         $xx = $x->buffer();
         $yy = $y->buffer();
+        $ofs_x = $x->offset();
         for($i=0;$i<$rows;$i++) {
             for($j=0;$j<$cols;$j++) {
-                $yy[$j*$rows+$i] = $xx[$i*$cols+$j];
+                $yy[$j*$rows+$i] = $xx[$ofs_x+$i*$cols+$j];
             }
         }
         return $y;
     }
 
-    protected function isclose(NDArray $a, NDArray $b, ?float $rtol=null, ?float $atol=null) : bool
+    protected function absarray(NDArray $x) : NDArray
+    {
+        $y = $this->alloc($x->shape(),dtype:$x->dtype());
+        $xx = $x->buffer();
+        $yy = $y->buffer();
+        $ofs_x = $x->offset();
+        $size = $x->size();
+        for($i=0;$i<$size;$i++) {
+            $yy[$i] = abs($xx[$ofs_x+$i]);
+        }
+        return $y;
+    }
+
+    protected function isclose(
+        NDArray $a, NDArray $b,
+        ?float $rtol=null, ?float $atol=null,
+        ?bool $debug=null
+        ) : bool
     {
         $blas = $this->getBlas();
 
@@ -488,6 +506,10 @@ trait Utils
         $diffs = $this->copy($b);
         $blas->axpy(...$this->translate_axpy($a,$diffs,$alpha));
         $iDiffMax = $blas->iamax(...$this->translate_amin($diffs));
+        if($debug) {
+            echo "diffs=".$this->arrayToString($diffs,'%14.8e',true)."\n";
+            echo "iDiffMax=$iDiffMax\n";
+        }
         $diff = $this->abs($diffs->buffer()[$iDiffMax]);
 
         // close = atol + rtol * b
@@ -495,6 +517,9 @@ trait Utils
         $blas->scal(...$this->translate_scal($rtol,$scalB));
         $iCloseMax = $blas->iamax(...$this->translate_amin($scalB));
         $close = $atol+$this->abs($scalB->buffer()[$iCloseMax]);
+        if($debug) {
+            echo "diff=".sprintf('%14.8e',$diff).", close=".sprintf('%14.8e',$close)."\n";
+        }
         return $diff < $close;
     }
 
