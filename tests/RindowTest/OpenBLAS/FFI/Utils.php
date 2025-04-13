@@ -461,10 +461,24 @@ trait Utils
         $y = $this->alloc([$cols,$rows],dtype:$x->dtype());
         $xx = $x->buffer();
         $yy = $y->buffer();
+        $ofs_x = $x->offset();
         for($i=0;$i<$rows;$i++) {
             for($j=0;$j<$cols;$j++) {
-                $yy[$j*$rows+$i] = $xx[$i*$cols+$j];
+                $yy[$j*$rows+$i] = $xx[$ofs_x+$i*$cols+$j];
             }
+        }
+        return $y;
+    }
+
+    protected function absarray(NDArray $x) : NDArray
+    {
+        $y = $this->alloc($x->shape(),dtype:$x->dtype());
+        $xx = $x->buffer();
+        $yy = $y->buffer();
+        $ofs_x = $x->offset();
+        $size = $x->size();
+        for($i=0;$i<$size;$i++) {
+            $yy[$i] = abs($xx[$ofs_x+$i]);
         }
         return $y;
     }
@@ -493,7 +507,7 @@ trait Utils
         $blas->axpy(...$this->translate_axpy($a,$diffs,$alpha));
         $iDiffMax = $blas->iamax(...$this->translate_amin($diffs));
         if($debug) {
-            echo "diffs=".$this->arrayToString($diffs,'%10.6f',true)."\n";
+            echo "diffs=".$this->arrayToString($diffs,'%14.8e',true)."\n";
             echo "iDiffMax=$iDiffMax\n";
         }
         $diff = $this->abs($diffs->buffer()[$iDiffMax]);

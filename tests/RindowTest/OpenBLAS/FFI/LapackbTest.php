@@ -279,13 +279,13 @@ class LapackbTest extends TestCase
 
         echo "u=".$this->arrayToString($u,'%10.6f',true)."\n";
         echo "correctU=".$this->arrayToString($correctU,'%10.6f',true)."\n";
-        $this->assertTrue($this->isclose($u,$correctU,rtol:1e-2,atol:1e-3,debug:true));
+        $this->assertTrue($this->isclose($this->absarray($u),$this->absarray($correctU),rtol:1e-2,atol:1e-3,debug:true));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($u,$correctU,-1))));
         # ---- s ----
         $correctS = $this->array(
             [27.47,22.64, 8.56, 5.99, 2.01]
         ,dtype:$dtype);
-        $this->assertTrue($this->isclose($s,$correctS,rtol:1e-2,atol:1e-3));
+        $this->assertTrue($this->isclose($this->absarray($s),$this->absarray($correctS),rtol:1e-2,atol:1e-3,debug:true));
         //$this->assertLessThan(0.01,abs($this->amax($this->axpy($s,$correctS,-1))));
         # ---- vt ----
         $correctVT = $this->array([
@@ -297,7 +297,7 @@ class LapackbTest extends TestCase
             [-0.29, 0.58,-0.02, 0.38,-0.65, 0.11],
         ],dtype:$dtype);
         $correctVT = $this->transpose($correctVT);
-        $this->assertTrue($this->isclose($vt,$correctVT,rtol:1e-2,atol:1e-3));
+        $this->assertTrue($this->isclose($this->absarray($vt),$this->absarray($correctVT),rtol:1e-2,atol:1e-3,debug:true));
         //$this->assertLessThan(0.01,abs($la->amax($la->axpy($vt,$correctVT,-1))));
         $this->assertTrue(true);
     }
