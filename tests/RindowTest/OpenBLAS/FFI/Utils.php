@@ -492,6 +492,9 @@ trait Utils
         $diffs = $this->copy($b);
         $blas->axpy(...$this->translate_axpy($a,$diffs,$alpha));
         $iDiffMax = $blas->iamax(...$this->translate_amin($diffs));
+        if($debug) {
+            echo "iDiffMax=$iDiffMax\n";
+        }
         $diff = $this->abs($diffs->buffer()[$iDiffMax]);
 
         // close = atol + rtol * b
