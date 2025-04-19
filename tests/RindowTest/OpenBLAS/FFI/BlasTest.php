@@ -4087,6 +4087,11 @@ class BlasTest extends TestCase
     #[DataProvider('providerDtypesComplexes')]
     public function testTrsvComplexNoTransposeConj($params)
     {
+        if(PHP_OS==='Darwin') {
+            $this->markTestSkipped("MacOS not support ConjNoTrans");
+            return;
+        }
+
         extract($params);
         $blas = $this->getBlas();
 
