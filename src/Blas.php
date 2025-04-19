@@ -935,6 +935,83 @@ class Blas
         }
     }
 
+    public function trsv(
+        int $order,
+        int $uplo,
+        int $trans,
+        int $diag,
+        int $n,
+        BufferInterface $A, int $offsetA, int $ldA,
+        BufferInterface $X, int $offsetX, int $incX,
+        ) : void
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        // Check Buffer A
+        $this->assert_matrix_buffer_spec("A", $A, $n, $n, $offsetA, $ldA);
+
+        // Check transA code
+        if($trans!==BLASIF::NoTrans && $trans!==BLASIF::ConjNoTrans &&
+            $trans!==BLASIF::Trans && $trans!==BLASIF::ConjTrans) {
+            throw new InvalidArgumentException("unknown transpose mode for bufferA: $trans");
+        }
+        // Check Buffer X
+        $this->assert_vector_buffer_spec("X", $X, $n, $offsetX, $incX);
+    
+        // Check Buffer A and X and Y
+        $dtype = $A->dtype();
+        if($dtype!=$X->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for A and X");
+        }
+        if($trans==BLASIF::ConjNoTrans && $this->isVecib()) {
+            throw new InvalidArgumentException("Unsupported dtype on MacOS: {$trans}");
+        }
+
+        switch($dtype) {
+            case NDArray::float32:{
+                $ffi->cblas_strsv(
+                    $order, $uplo, $trans, $diag,
+                    $n,
+                    $A->addr($offsetA),$ldA,
+                    $X->addr($offsetX),$incX,
+                );
+                break;
+            }
+            case NDArray::float64:{
+                $ffi->cblas_dtrsv(
+                    $order, $uplo, $trans, $diag,
+                    $n,
+                    $A->addr($offsetA),$ldA,
+                    $X->addr($offsetX),$incX,
+                );
+                break;
+            }
+            case NDArray::complex64:{
+                $ffi->cblas_ctrsv(
+                    $order, $uplo, $trans, $diag,
+                    $n,
+                    $A->addr($offsetA),$ldA,
+                    $X->addr($offsetX),$incX,
+                );
+                break;
+            }
+            case NDArray::complex128:{
+                $ffi->cblas_ztrsv(
+                    $order, $uplo, $trans, $diag,
+                    $n,
+                    $A->addr($offsetA),$ldA,
+                    $X->addr($offsetX),$incX,
+                );
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+    }
+
+
     public function gemm(
         int $order,
         int $transA,
