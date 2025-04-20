@@ -635,6 +635,24 @@ class Blas
                 );
                 break;
             }
+            case NDArray::complex64:{
+                $ffi->cblas_crotg(
+                    $A->addr($offsetA),
+                    $B->addr($offsetB),
+                    $C->addr($offsetC),
+                    $S->addr($offsetS),
+                );
+                break;
+            }
+            case NDArray::complex128:{
+                $ffi->cblas_zrotg(
+                    $A->addr($offsetA),
+                    $B->addr($offsetB),
+                    $C->addr($offsetC),
+                    $S->addr($offsetS),
+                );
+                break;
+            }
             default: {
                 throw new InvalidArgumentException('Unsuppored data type');
             }

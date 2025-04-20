@@ -2495,12 +2495,13 @@ class BlasTest extends TestCase
         }
     }
 
-    public function testRotgNormal()
+    #[DataProvider('providerDtypesFloats')]
+    public function testRotgNormal($params)
     {
+        extract($params);
         $blas = $this->getBlas();
 
         // float32
-        $dtype = NDArray::float32;
         $inputs = [
             [1,1],
             [2,2],
@@ -2531,40 +2532,6 @@ class BlasTest extends TestCase
             $this->assertLessThan(1e-6,abs($rr-$rx));
             $this->assertLessThan(1e-6,abs(0-$ry));
         }
-
-        // float64
-        $dtype = NDArray::float64;
-        $inputs = [
-            [1,1],
-            [2,2],
-            [3,3],
-            [4,4],
-            [5,5],
-        ];
-        foreach($inputs as [$xx,$yy]) {
-            $X = $this->array($xx,dtype:$dtype);
-            $Y = $this->array($yy,dtype:$dtype);
-            [$AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS] =
-                $this->translate_rotg($X,$Y);
-           
-            $blas->rotg($AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS);
-
-            $rr = $AA[0];
-            $zz = $BB[0];
-            $cc = $CC[0];
-            $ss = $SS[0];
-            //echo "(x,y)=(".$X->buffer()[0].", ".$Y->buffer()[0].")\n";
-            //echo "(r,z)=(".$rr.", ".$zz.")\n";
-            //echo "(c,s)=(".$cc.", ".$ss.")\n";
-            $this->assertLessThan(1e-7,abs($xx-$X->buffer()[0]));
-            $this->assertLessThan(1e-7,abs($yy-$Y->buffer()[0]));
-            $rx =  $cc * $xx + $ss * $yy;
-            $ry = -$ss * $xx + $cc * $yy;
-            #echo "(rx,ry)=(".$rx.",".$ry.")\n";
-            $this->assertLessThan(1e-6,abs($rr-$rx));
-            $this->assertLessThan(1e-6,abs(0-$ry));
-        }
-
     }
    
     public function testRotNormal()
