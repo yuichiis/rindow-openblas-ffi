@@ -110,7 +110,10 @@ class BlasTest extends TestCase
             $AA,$offA,
             $BB,$offB,
             $CC,$offC,
-            $SS,$offS
+            $SS,$offS,
+
+            $C,
+            $S,
         ];
     }
 
@@ -2512,7 +2515,7 @@ class BlasTest extends TestCase
         foreach($inputs as [$xx,$yy]) {
             $X = $this->array($xx,dtype:$dtype);
             $Y = $this->array($yy,dtype:$dtype);
-            [$AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS] =
+            [$AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS, $C,$S] =
                 $this->translate_rotg($X,$Y);
            
             $blas->rotg($AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS);
@@ -2534,6 +2537,51 @@ class BlasTest extends TestCase
         }
     }
    
+    #[DataProvider('providerDtypesComplexes')]
+    public function testRotgComplex($params)
+    {
+        extract($params);
+        $blas = $this->getBlas();
+
+        $calc = $this->getCalcComplex();
+        $a = $this->array([C(1.0, 1.0)],dtype:$dtype);
+        $b = $this->array([C(2.0,-1.0)],dtype:$dtype);
+
+        [$AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS, $c,$s] =
+            $this->translate_rotg($a,$b);
+
+        $blas->rotg($AA,$offA,$BB,$offB,$CC,$offC,$SS,$offS);
+
+        //[$r,$z,$c,$s] = $la->rotg($a,$b);
+        // OpenBLAS
+        // r = 1.8708287477493+INFi  <-- Bug ?
+        // c = 0.5345224738121+0i
+        // s = 0.26726123690605+0.80178374052048i        
+        //echo "\n";
+        //echo "r = ".$r[0]."\n";
+        //echo "z = ".$z[0]."\n";
+        //echo "c = ".$c[0]."\n";
+        //echo "s = ".$s[0]."\n";
+        // $trueR = $calc->scale(sqrt(7/2),C(1,i:1));
+        // $trueR = $la->toNDArray($la->array([$trueR],dtype:$dtype));
+        // $this->assertTrue($mo->la()->isclose(
+        //     $trueR,
+        //     $r,
+        // ));
+        $trueC = C(sqrt(2/7));
+        $trueC = $this->array([$trueC],dtype:$dtype);
+        $this->assertTrue($this->isclose(
+            $trueC,
+            $c,
+        ));
+        $trueS = $calc->scale(1/sqrt(14),C(1,i:+3));
+        $trueS = $this->array([$trueS],dtype:$dtype);
+        $this->assertTrue($this->isclose(
+            $trueS,
+            $s,
+        ));
+    }
+
     public function testRotNormal()
     {
         $blas = $this->getBlas();
