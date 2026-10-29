@@ -88,8 +88,11 @@ class Blas
         return PHP_OS==='Darwin';
     }
 
-    protected function toComplex(object $from,int $dtype) : object
+    protected function toComplex(float|object $from,int $dtype, string $name) : object
     {
+        if(is_numeric($from)) {
+            throw new InvalidArgumentException("$name is not complex");
+        }
         $ffi = $this->ffi;
         switch($dtype) {
             case NDArray::complex64: {
@@ -137,13 +140,13 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$X->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$X->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_cscal($n,$alphaptr,$X->addr($offsetX),$incX);
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$X->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$X->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_zscal($n,$alphaptr,$X->addr($offsetX),$incX);
                 break;
@@ -186,13 +189,13 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$X->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$X->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_caxpy($n,$alphaptr,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$X->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$X->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_zaxpy($n,$alphaptr,$X->addr($offsetX),$incX,$Y->addr($offsetY),$incY);
                 break;
@@ -998,9 +1001,9 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$X->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$X->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$X->dtype());
+                $beta = $this->toComplex($beta,$X->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_cgemv(
                     $order, $trans,
@@ -1013,9 +1016,9 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$X->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$X->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$X->dtype());
+                $beta = $this->toComplex($beta,$X->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_zgemv(
                     $order, $trans,
@@ -1193,9 +1196,9 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_cgemm(
                     $order,
@@ -1210,9 +1213,9 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_zgemm(
                     $order,
@@ -1299,9 +1302,9 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_csymm(
                     $order,
@@ -1316,9 +1319,9 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_zsymm(
                     $order,
@@ -1399,9 +1402,9 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_csyrk(
                     $order,
@@ -1415,9 +1418,9 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_zsyrk(
                     $order,
@@ -1501,9 +1504,9 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_csyr2k(
                     $order,
@@ -1518,9 +1521,9 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
-                $beta = $this->toComplex($beta,$A->dtype());
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
                 $betaptr = FFI::addr($beta);
                 $ffi->cblas_zsyr2k(
                     $order,
@@ -1606,7 +1609,7 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_ctrmm(
                     $order,
@@ -1621,7 +1624,7 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_ztrmm(
                     $order,
@@ -1707,7 +1710,7 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_ctrsm(
                     $order,
@@ -1722,7 +1725,7 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_ztrsm(
                     $order,
@@ -1801,7 +1804,7 @@ class Blas
                 break;
             }
             case NDArray::complex64:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_comatcopy(
                     $order,
@@ -1814,7 +1817,7 @@ class Blas
                 break;
             }
             case NDArray::complex128:{
-                $alpha = $this->toComplex($alpha,$A->dtype());  // *** CAUTION ***
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
                 $alphaptr = FFI::addr($alpha);                  // To keep object instance.
                 $ffi->cblas_zomatcopy(
                     $order,
