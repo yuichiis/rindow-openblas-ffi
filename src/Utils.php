@@ -67,6 +67,27 @@ trait Utils
         }
     }
 
+    private function assert_uplo_parameter(string $name, int $uplo) : void
+    {
+        if($uplo!==BLASIF::Upper && $uplo!==BLASIF::Lower) {
+            throw new InvalidArgumentException("Argument $name must be Upper or Lower.");
+        }
+    }
+
+    private function assert_diagonal_parameter(string $name, int $diag) : void
+    {
+        if($diag!==BLASIF::NonUnit && $diag!==BLASIF::Unit) {
+            throw new InvalidArgumentException("Argument $name must be NonUnit or Unit.");
+        }
+    }
+
+    private function assert_order_parameter(string $name, int $order) : void
+    {
+        if($order!==BLASIF::RowMajor && $order!==BLASIF::ColMajor) {
+            throw new InvalidArgumentException("Argument $name must be RowMajor or ColMajor.");
+        }
+    }
+
     private function assert_band_parameter(string $name, int $k) : void
     {
         if($k<0) {
@@ -106,6 +127,10 @@ trait Utils
         }
         if($ld<1) {
             throw new InvalidArgumentException("Argument ld$name must be greater than 0.");
+        }
+        $minLd = ($order==BLASIF::RowMajor) ? $n : $m;
+        if($ld<$minLd) {
+            throw new InvalidArgumentException("Argument ld$name must be greater than or equals to $minLd.");
         }
         if($order==BLASIF::RowMajor) {
             $last = ($m-1)*$ld+($n-1);
