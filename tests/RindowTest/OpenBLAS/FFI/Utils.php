@@ -24,7 +24,7 @@ function C(
 trait Utils
 {
     protected $factory;
-    
+
     public function setUp() : void
     {
         $this->factory = new OpenBLASFactory();
@@ -167,7 +167,7 @@ trait Utils
             {
                 return new Buffer($size,$dtype);
             }
-            
+
             protected function isComplex(?int $dtype=null) : bool
             {
                 $dtype = $dtype ?? $this->_dtype;
@@ -181,7 +181,7 @@ trait Utils
                 } elseif($A instanceof ArrayObject) {
                     $A->ksort();
                 }
-        
+
                 $num = null;
                 foreach ($A as $key => $value) {
                     if(!is_int($key))
@@ -230,7 +230,7 @@ trait Utils
                 }
                 return $A;
             }
-                
+
             protected function genShape($A)
             {
                 $shape = [];
@@ -240,7 +240,7 @@ trait Utils
                 }
                 return $shape;
             }
-        
+
             protected function checkShape(array $shape)
             {
                 foreach($shape as $num) {
@@ -271,15 +271,15 @@ trait Utils
             public function shape() : array { return $this->shape; }
 
             public function ndim() : int { return count($this->shape); }
-        
+
             public function dtype() { return $this->dtype; }
-        
+
             public function buffer() : BufferInterface { return $this->buffer; }
-        
+
             public function offset() : int { return $this->offset; }
-        
+
             public function size() : int { return array_product($this->shape); }
-        
+
             public function reshape(array $shape) : NDArray
             {
                 if(array_product($shape)==array_product($this->shape)) {
@@ -314,12 +314,12 @@ trait Utils
                     return false;
                 return true;
             }
-        
+
             public function offsetGet( $offset ) : mixed
             {
                 if(!$this->offsetExists($offset))
                     throw new OutOfRangeException("Index is out of range");
-        
+
                 // for range spesification
                 if(is_array($offset)) {
                     $shape = $this->shape;
@@ -338,7 +338,7 @@ trait Utils
                     $new = new self($this->buffer,$this->dtype,$shape,$this->offset+$offset[0]*$itemSize);
                     return $new;
                 }
-        
+
                 // for single index specification
                 $shape = $this->shape;
                 $max = array_shift($shape);
@@ -353,7 +353,7 @@ trait Utils
                 $new = new self($this->buffer,$this->dtype,$shape,$this->offset+$offset*$size);
                 return $new;
             }
-        
+
             public function offsetSet( $offset , $value ) : void { throw new \Exception('not implement'); }
             public function offsetUnset( $offset ) : void { throw new \Exception('not implement'); }
             public function count() : int  { throw new \Exception('not implement'); }
@@ -558,17 +558,21 @@ trait Utils
                 $str .= ']';
                 return $str;
             } else {
-                if($format) {
-                    return '['.implode(',',array_map(function($x) use ($format,$array) {
-                            if($array->dtype()==NDArray::complex64||$array->dtype()==NDArray::complex128) {
-                                return sprintf($format,$x->real,$x->imag);
-                            } else {
-                                return sprintf($format,$x);
-                            }
-                        },$array->toArray())).']';
-                } else {
-                    return '['.implode(',',$array->toArray()).']';
-                }
+                return '['.implode(',',array_map(function($x) use ($format,$array) {
+                    if($format) {
+                        if($array->dtype()==NDArray::complex64||$array->dtype()==NDArray::complex128) {
+                            return sprintf($format,$x->real,$x->imag);
+                        } else {
+                            return sprintf($format,$x);
+                        }
+                    } else {
+                        if($array->dtype()==NDArray::complex64||$array->dtype()==NDArray::complex128) {
+                            return '('.strval($x->real).(($x->imag>=0)?'+':'').strval($x->imag).'i)';
+                        } else {
+                            return strval($x);
+                        }
+                    }
+                },$array->toArray())).']';
             }
         }
         $string = '[';

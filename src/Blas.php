@@ -1040,7 +1040,7 @@ class Blas
         $this->assert_vector_buffer_spec("X", $X, $cols, $offsetX, $incX);
         // Check Buffer Y
         $this->assert_vector_buffer_spec("Y", $Y, $rows, $offsetY, $incY);
-    
+
         // Check Buffer A and X and Y
         $dtype = $A->dtype();
         if($dtype!=$X->dtype() || $dtype!=$Y->dtype()) {
@@ -1132,7 +1132,7 @@ class Blas
         }
         // Check Buffer X
         $this->assert_vector_buffer_spec("X", $X, $n, $offsetX, $incX);
-    
+
         // Check Buffer A and X and Y
         $dtype = $A->dtype();
         if($dtype!=$X->dtype()) {

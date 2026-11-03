@@ -1,3 +1,6 @@
+.vscode
+.zed
+/~/
 vendor/
 *.log
 composer.lock
