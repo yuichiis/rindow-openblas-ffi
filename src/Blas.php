@@ -2593,6 +2593,87 @@ class Blas
 
     }
 
+    public function hemm(
+        int $order,
+        int $side,
+        int $uplo,
+        int $m,
+        int $n,
+        float|object $alpha,
+        BufferInterface $A, int $offsetA, int $ldA,
+        BufferInterface $B, int $offsetB, int $ldB,
+        float|object $beta,
+        BufferInterface $C, int $offsetC, int $ldC ) : void
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("m", $m);
+        $this->assert_shape_parameter("n", $n);
+
+        // Check Buffer A
+        if($side==BLASIF::Left) {
+            $rows = $m;
+        } elseif($side==BLASIF::Right) {
+            $rows = $n;
+        } else {
+            throw new InvalidArgumentException('unknown side mode for bufferA.');
+        }
+        $this->assert_matrix_buffer_spec("A", $A, $rows, $rows, $offsetA, $ldA);
+
+        // Check Buffer B
+        $this->assert_matrix_buffer_spec("B", $B, $m, $n, $offsetB, $ldB);
+
+        // Check Buffer C
+        $this->assert_matrix_buffer_spec("C", $C, $m, $n, $offsetC, $ldC);
+
+        // Check Buffer A and B and C
+        $dtype = $A->dtype();
+        if($dtype!=$B->dtype() || $dtype!=$C->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for A and B and C");
+        }
+
+        switch($dtype) {
+            case NDArray::complex64:{
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
+                $alphaptr = FFI::addr($alpha);                  // To keep object instance.
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
+                $betaptr = FFI::addr($beta);
+                $ffi->cblas_chemm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $m,$n,
+                    $alphaptr,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $betaptr,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
+                $alphaptr = FFI::addr($alpha);                  // To keep object instance.
+                $beta = $this->toComplex($beta,$A->dtype(),'beta');
+                $betaptr = FFI::addr($beta);
+                $ffi->cblas_zhemm(
+                    $order,
+                    $side,
+                    $uplo,
+                    $m,$n,
+                    $alphaptr,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $betaptr,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+
+    }
+
     public function syrk(
         int $order,
         int $uplo,
@@ -2681,6 +2762,71 @@ class Blas
                     $alphaptr,
                     $A->addr($offsetA),$ldA,
                     $betaptr,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+    }
+
+    public function herk(
+        int $order,
+        int $uplo,
+        int $trans,
+        int $n,
+        int $k,
+        float $alpha,
+        BufferInterface $A, int $offsetA, int $ldA,
+        float $beta,
+        BufferInterface $C, int $offsetC, int $ldC ) : void
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        $this->assert_shape_parameter("k", $k);
+
+        if($trans==BLASIF::NoTrans || $trans==BLASIF::ConjNoTrans) {
+            $rows = $n; $cols = $k;
+        } else if($trans==BLASIF::Trans || $trans==BLASIF::ConjTrans) {
+            $rows = $k; $cols = $n;
+        } else {
+            throw new InvalidArgumentException("unknown transpose mode for bufferA.");
+        }
+        $this->assert_matrix_buffer_spec("A", $A, $rows, $cols, $offsetA, $ldA);
+
+        // Check Buffer C
+        $this->assert_matrix_buffer_spec("C", $C, $n, $n, $offsetC, $ldC);
+
+        // Check Buffer A and C
+        $dtype = $A->dtype();
+        if($dtype!=$C->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for A and C");
+        }
+
+        switch($dtype) {
+            case NDArray::complex64:{
+                $ffi->cblas_cherk(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $ffi->cblas_zherk(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alpha,
+                    $A->addr($offsetA),$ldA,
+                    $beta,
                     $C->addr($offsetC),$ldC);
                 break;
             }
@@ -2785,6 +2931,80 @@ class Blas
                     $A->addr($offsetA),$ldA,
                     $B->addr($offsetB),$ldB,
                     $betaptr,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            default: {
+                throw new InvalidArgumentException('Unsuppored data type');
+            }
+        }
+    }
+
+    public function her2k(
+        int $order,
+        int $uplo,
+        int $trans,
+        int $n,
+        int $k,
+        float|object $alpha,
+        BufferInterface $A, int $offsetA, int $ldA,
+        BufferInterface $B, int $offsetB, int $ldB,
+        float $beta,
+        BufferInterface $C, int $offsetC, int $ldC ) : void
+    {
+        $ffi= $this->ffi;
+
+        $this->assert_shape_parameter("n", $n);
+        $this->assert_shape_parameter("k", $k);
+
+        // Check Buffer A and B
+        if($trans==BLASIF::NoTrans || $trans==BLASIF::ConjNoTrans) {
+            $rows = $n; $cols = $k;
+        } else if($trans==BLASIF::Trans || $trans==BLASIF::ConjTrans) {
+            $rows = $k; $cols = $n;
+        } else {
+            throw new InvalidArgumentException('unknown transpose mode for bufferA.');
+        }
+        $this->assert_matrix_buffer_spec("A", $A, $rows, $cols, $offsetA, $ldA);
+        $this->assert_matrix_buffer_spec("B", $B, $rows, $cols, $offsetB, $ldB);
+
+        // Check Buffer C
+        $this->assert_matrix_buffer_spec("C", $C, $n, $n, $offsetC, $ldC);
+
+        // Check Buffer A and B and C
+        $dtype = $A->dtype();
+        if($dtype!=$B->dtype() || $dtype!=$C->dtype()) {
+            throw new InvalidArgumentException("Unmatch data type for A and B and C");
+        }
+
+        switch($dtype) {
+            case NDArray::complex64:{
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
+                $alphaptr = FFI::addr($alpha);                  // To keep object instance.
+                $ffi->cblas_cher2k(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alphaptr,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
+                    $C->addr($offsetC),$ldC);
+                break;
+            }
+            case NDArray::complex128:{
+                $alpha = $this->toComplex($alpha,$A->dtype(),'alpha');  // *** CAUTION ***
+                $alphaptr = FFI::addr($alpha);                  // To keep object instance.
+                $ffi->cblas_zher2k(
+                    $order,
+                    $uplo,
+                    $trans,
+                    $n,$k,
+                    $alphaptr,
+                    $A->addr($offsetA),$ldA,
+                    $B->addr($offsetB),$ldB,
+                    $beta,
                     $C->addr($offsetC),$ldC);
                 break;
             }
